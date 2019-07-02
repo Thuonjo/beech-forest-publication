@@ -1,0 +1,6 @@
+book_filename: "New Zealand Beech Forest Dynamics"
+language:
+  ui:
+    chapter_name: "Chapter "
+delete_merged_file: true
+
