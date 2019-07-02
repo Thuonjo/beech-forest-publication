@@ -5,8 +5,8 @@ bookdown::gitbook:
       before: |
         <li><a href="./">A simple template for projects</a></li>
       after: |
-        <li><a href="https://github.com/davan690/phd-thesis" target="blank">Published with bookdown</a></li>
-    edit: https://github.com/davan690/phd-thesis/docs/%s
+        <li><a href="https://github.com/davan690/beech-forest-publication" target="blank">Published with bookdown</a></li>
+    edit: https://github.com/davan690/beech-forest-publication/docs/%s
     download: ["pdf", "epub", "mobi", "docx"]
 bookdown::pdf_book:
   includes:
@@ -15,3 +15,5 @@ bookdown::pdf_book:
   citation_package: natbib
   keep_tex: yes
 bookdown::epub_book: default
+bookdown::word_document2:
+  reference_docx: template3.docx

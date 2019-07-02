@@ -1,0 +1,71 @@
+# Status {#status}
+
+```{r include = FALSE}
+if(!knitr:::is_html_output())
+  {
+  options("width"=56)
+  knitr::opts_chunk$set(tidy.opts=list(width.cutoff=56, indent = 2), tidy = TRUE)
+  knitr::opts_chunk$set(fig.pos = 'H')
+}
+```
+
+All other data and resources to render project from raw data (copied from my private GIT repository) can be found on [dropbox](https://www.dropbox.com/home/phd-drafts-anthony) and online [here](https://www.ssnhub.com/beech-forest-dynamics/) and are currently at a draft quality as I build my phd thesis.
+
+| `GIThub` Document                                            | Overview                                                     | Status                                                       |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| *Pre-registration*                                           | not needed                                                   | `NA`                                                         |
+| [Current draft]                                              | As I am developing this approach to reproducible research this draft will look better and better. | Online [here](https://www.ssnhub.com/beech-forest-dynamics/) |
+| Online [link here](https://github.com/davan690/beech-fororest-dynamics/) | Dropbox is currently the backup for this  as I get better at build `gitbook`s using `RStudio` and `bookdown`. This is currently only accessible if you have the private link that I will have sent through email. | Dropbox [link here](https://www.dropbox.com/home/phd-drafts-anthony/beech-forest-dynamics/drafts/Davidson_2019_BeechForest.html) |
+| [Abstract]                                                   | Always last..ish a overview is online [here](https://www.ssnhub.com/beech-forest-dynamics/) | [*additional resources for collaborators here*](https://www.dropbox.com/home/phd-drafts-anthony) |
+| [Style sheet]                                                | A way of recording semantic choices for this research project. | Dropbox [Link here](https://www.dropbox.com/home/phd-drafts-anthony/beech-forest-dynamics/Styles_manual_sheet.md/) |
+| [Introduction]                                               | Currently within the draft manuscript                        | Dropbox [Link here](https://www.dropbox.com/sh/5h4mp67p7u6t1lj/AAAQVKS4qnvu2oQLu53JQUofa?dl=0); Online [link here](https://www.ssnhub.com/beech-forest-dynamics/intro.html) |
+| [Methods]                                                    | manuscript methods can be found here and other extensions below | Online [link here](https://www.ssnhub.com/beech-forest-dynamics/method.html) |
+|                                                              | This report takes the raw CR data and generates simple average plots of beech seed, mice and rat abundances | [Model wrangling](https://www.ssnhub.com/Beech-forest-publication/) |
+|                                                              | To estimate the differences between Prediction A and B       | [Simple ANOVAs](https://www.ssnhub.com/simple/)              |
+|                                                              | To estimate the differences between Prediction C, D, and E   | [Model outputs](https://www.ssnhub.com/outputs/)             |
+|                                                              | Simulation model                                             | Full simulation document [here](https://www.ssnhub.com/simulation/) |
+| [Results]                                                    | The figures can be found here                                | Online [link here](https://www.ssnhub.com/beech-forest-dynamics/results.html) |
+| [Discussion]                                                 |                                                              | Online [link here](https://www.ssnhub.com/beech-forest-dynamics/discussion.html) |
+| Bayesian methods                                             |                                                              | [Dropbox](https://www.dropbox.com/home/phd-drafts-anthony/beech-forest-dynamics/A1_full_bayesian_model.pdf) |
+| Figures                                                      |                                                              | [Dropbox](https://www.dropbox.com/home/phd-drafts-anthony/beech-forest-dynamics/figs) |
+| Functional response                                          |                                                              | [Dropbox](https://www.dropbox.com/home/phd-drafts-anthony/beech-forest-dynamics/Davidson_2019_BeechForest_Appendix.pdf) |
+| Mapping                                                      | coming online soon                                           | [Dropbox](https://www.dropbox.com/home/phd-drafts-anthony/beech-forest-dynamics/figs) |
+| [References]                                                 |                                                              | [Dropbox](https://www.dropbox.com/home/phd-drafts-anthony/beech-forest-dynamics/figs) |
+| [Appendix]                                                   |                                                              | [Dropbox](https://www.dropbox.com/home/phd-drafts-anthony/beech-forest-dynamics/figs) |
+| Extra resources                                              |                                                              | [Dropbox](https://www.dropbox.com/home/phd-drafts-anthony/beech-forest-dynamics/figs) |
+|                                                              |                                                              |                                                              |
+|                                                              |                                                              |                                                              |
+
+<div class="col-md-4 col-md-offset-0 col-sm-4 col-sm-offset-0 col-xs-12 col-xs-offset-0 text-center">
+    <div class="project-card">
+        {%- assign gh-user = "davan690" -%}
+        {%- assign gh-project = "davan690/beech-forest-dynamics" -%}
+      <a target="_blank" href="https://github.com/{{- gh-user -}}/{{- gh-project -}}" class="project-link" title="Go to Github Poject Page">
+        <span class="fa-stack fa-4x">
+          <i class="fa fa-circle fa-stack-2x stack-color"></i>
+          <i class="fa fa-user-secret fa-stack-1x fa-inverse"></i>
+        </span>
+        <h4>{{- gh-project -}}</h4>
+        <hr class="seperator">
+        <p class="text-muted">The beginnings of a interactive PhD thesis using Markdown. </p>
+        <hr class="seperator">
+        <img src="https://img.shields.io/github/forks/{{- gh-user -}}/{{- gh-project -}}.svg?style=social&label=Fork" alt="Github" title="Github Forks">
+        <img src="https://img.shields.io/github/stars/{{- gh-user -}}/{{- gh-project -}}.svg?style=social&label=Stars" alt="Github" title="Github Stars">
+      </a>
+    </div>
+  </div>
+
+
+
+## My notes
+
+And posts so far to help with development below:
+
+<div class="post">
+<ul>
+{% for post in site.tags["beech"] %}
+  <a href="{{ post.url }}">{{ post.title }}</a> ({{ post.date | date_to_string }})<br>
+    {{ post.description }}
+{% endfor %}
+</ul>
+</div>
