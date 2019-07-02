@@ -1,0 +1,1948 @@
+---
+type: post
+title: "Data Wrangling"
+subtitle: "For Stoat control in Beech forest paper"
+author: "Anthony Davidson"
+date: '2019-05-16'
+output: 
+  rmarkdown::word_document:
+    reference_docx: template3.docx
+bibliography: Beech-forests.bib
+---
+
+```{r global-options, echo=FALSE, message=FALSE, warning=FALSE}
+# export .r code only
+# knitr::purl("./Davidson_2019_Data_wrangling.Rmd")
+
+# render draft to webpage
+# rmarkdown::render(input = "Davidson_2019_BeechForest.Rmd")
+# ,
+#                   output_format = "html_document",
+#                   output_file = "Davidson_2019_t.html")
+
+#render nb.html for webpage
+# rmarkdown::render(input = "Davidson_2019_BeechForest.Rmd", output_format = "html_notebook", output_dir = "_posts")
+
+# compareGroups::cGroupsGUI(mtcars)
+# document global rules
+knitr::opts_chunk$set(comment=NA,
+                      fig.path = "../figs/",
+                      echo=FALSE, 
+                      fig.height=6, 
+                      fig.width=10,
+                      message=FALSE, 
+                      warning=FALSE)
+
+# how do I do this??
+# ,eval = FALSE,include = FALSE
+
+```
+
+```{r sorting-references}
+library(citr)
+# citr::md_cite("./Beech-forest.bib")
+
+# bib(file = "Beech-forests.bib")
+```
+
+# Overview
+
+```{r eniviroment, message=FALSE, warning=FALSE, include=FALSE}
+# libraries needed
+source("./R/r-packages-needed.R", echo = FALSE)
+source("./R/theme_raw_fig3s.r", echo = FALSE)
+source("./R/davidson_2019_theme.r", echo = FALSE)
+```
+
+New Zealand beech forests exhibit boom-bust dynamics (Figure 1). Where, beech trees mast in spatial synchronised but annually variable years dependant [@wardle1991]. Mice populations have invaded these systems and studies have shown that populations response numerically to changes in resources (beech seed) and mice have been modelled under a range of both functional and numerical responses [@king1983]. 
+
+This report investigates the estimation of the raw observations. The data is in a similar structure as historically used for estimation of food availability [@choquenot2000; @ruscoe2001; @ruscoe2005].
+
+## Final figure/s
+
+At some point ...
+
+```{r message=FALSE, warning=FALSE}
+# export plot for example vignette
+# png("./figs/fig-2-study.png")
+# fig.2.plot.design
+# dev.off()
+```
+
+
+# Introduction and Methods
+
+*Generally look at thesis drafts [here]("https://www.ssnhub.com/").*
+
+This RMarkdown file is intend to be extended on for different species of trees, fruit and seed. These files are the supporting documetation to the data-wrangling code in the Beech forest manuscript [here]("https://www.ssnhub.com/invasive-species-research.html/").
+
+Bbut there is also many other supporting resources and less formal tutorials on my [website](https://www.ssnhub.com) and the feed below:
+
+## Invasive species notes
+
+```{r echo=FALSE}
+# {% for post in site.tags["invasive-spp"] %}
+#   <a href="{{ post.url }}">{{ post.title }}</a> ({{ post.date | date_to_string }})<br>
+#     {{ post.description }}
+# {% endfor %}
+```
+
+## Tidyverse
+
+To aviod issues with factors and data management I have used the following pre-print publications authored by the creators of `dplyr` and `ggplot2`. Tidyverse is a group of packages that together make use a `tidy` approach effective.
+
+Here is some more information about the [tidyverse approach]("https://www.ssnhub.com/a-tidy-world.html")
+
+## Meta-data
+
+- [Current draft](https://www.dropbox.com/home/phd-drafts-anthony/beech-forest-dynamics/drafts/Davidson_2019_BeechForest.html)
+
+- [Style sheet](https://www.dropbox.com/home/phd-drafts-anthony/beech-forest-dynamics/Styles_manual_sheet.md/)
+
+- [Introduction](https://www.dropbox.com/sh/5h4mp67p7u6t1lj/AAAQVKS4qnvu2oQLu53JQUofa?dl=0)
+
+- [Bayesian methods](https://www.dropbox.com/home/phd-drafts-anthony/beech-forest-dynamics/A1_full_bayesian_model.pdf)
+
+- [Figures](https://www.dropbox.com/home/phd-drafts-anthony/beech-forest-dynamics/figs)
+
+- [Functional response](https://www.dropbox.com/home/phd-drafts-anthony/beech-forest-dynamics/Davidson_2019_BeechForest_Appendix.pdf)
+
+- [References](): *coming online soon*
+
+All other data and resources to render project from raw data (copied from my private GIT repository) can be found on [dropbox](https://www.dropbox.com/home/phd-drafts-anthony) but will be available here when I have incorporated the co-authors feedback
+
+```{r echo=FALSE}
+# {% for post in site.tags["invasive-spp"] %}
+#   <a href="{{ post.url }}">{{ post.title }}</a> ({{ post.date | date_to_string }})<br>
+#     {{ post.description }}
+# {% endfor %}
+```
+
+## Variable structure
+
+I have defined the following parameters that help to keep the type of variable the same throughout the joining of the raw data and the model outputs.
+
+### Group levels
+
+THis has been hard to do with as little manual mistakes in factor levels as possible. The levelling structure should be the same throughout this document as descripted in beech data above. 
+
+*But in short*
+
+#### Labels/levels
+
+*all mixed up* **still**
+
+```{r variable-str-labels, echo = TRUE}
+#month levels to get it right
+month_levels <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+# full set of dates
+true.date <- as.Date(c("1999-05-01","1999-08-01","1999-11-01","2000-02-01","2000-05-01","2000-08-01","2000-11-01","2001-02-01","2001-05-01","2001-08-01", "2001-11-01","2002-05-01","2002-11-01","2003-02-01","2003-05-01","2003-08-01","2003-11-01","2004-02-01","2004-05-01","2004-08-01"))
+
+# Grid labels
+labels <- c("egl M1" = "Grid one", 
+            "egl M2" = "Grid two", 
+            "egl MR1" = "Grid three",
+            "egl MR2" = "Grid four",
+            "hol M1" = "Grid five",
+            "hol M2" = "Grid six",
+            "hol MR1" = "Grid seven",
+            "hol MR2" = "Grid eight")
+
+# Valley labels
+labels2 <- c(egl = "Eglinton valley", hol = "Hollyford valley")
+
+```
+
+##### Full treatment
+
+**6 levels**
+
+```{r variable-str-labels2, echo = TRUE}
+treat.six.levels <- c("hol no control rats.removed",
+                                     "hol control rats.present",
+                                     "hol control rats.removed",
+                                     "egl control rats.present",
+                                     "egl control rats.removed" ,
+                                     "hol no control rats.present")
+
+```
+
+In this the structure of the variables for the seed dataset have to be joint and visualised we need to insure that there are the same number of replicates in this dataset as the output dataset (from the JAGS model). 
+
+
+##### Still coming out of wash
+
+COntrol labels
+- Stoats yes/no
+
+Conditions labals
+- Rats yes/no
+
+### Seasonal factorisation
+
+In the data the seasonal parameter is month where:
+
+| Month    | Season | Factor level |
+|----------|--------|--------------|
+| February | Summer | 1            |
+| May      | Autumn | 2            |
+| August   | Winter | 3            |
+| November | Spring | 4            |
+
+# Seeds
+
+This is important because the following bias are known and need to be accounted for before analysising data.
+
+1. Seeds without the kernal have no energy value and need to be removed.
+
+2. Different beech species produce different sized seeds and this has an effect on the "available seed".
+
+3. As our models build in complexity we will include a variety of food resources and therefore need to model these relationships in the future
+
+## Importing data
+
+The orginal data was in excel format and manually covered to csv as below. This has had the non-viable material removed and only whole kernals of seed for three species of beech tree were reported.
+
+```{r seed-data, message=FALSE, warning=FALSE}
+# raw seed file generated from input file
+# create seed data file
+
+#laptop
+seed <- read_csv("C://GIT/beech-paper-private/manuscript/data/seed_data_jan2017.csv")
+
+#desktop
+# seed <- read_csv("C://Code/beech-paper-private/manuscript/data/seed_data_jan2017.csv")
+
+```
+
+### Seed Measurement 
+
+The data is very clean with all the information but to make life simplier for the analysis and bindng to output data to be correct.
+
+#### Method - `metre sq (m2)`
+
+1. `Bucket radius = 0.125m`
+
+2. `Bucket area = 0.049087385m2`
+
+3. `4 buckets per grid = total catch area = 0.19635 m2`
+
+4. `So seeds /m2  =# Seeds counted/0.1963`
+
+Therefore, if $800$ seeds were counted on a grid on a particular trip, this will equate to $4000 m^2$.
+
+```{r current-seed-wrangling}
+# data
+# glimpse(seed)
+
+# use seed in the previous quarter to predict rate of increase
+# so add one to trip to align with r
+seed.paper <- mutate(seed, mountain = ifelse(is.na(mountain), 0, mountain),
+                 red = ifelse(is.na(red), 0, red),
+                 silver = ifelse(is.na(silver), 0, silver),
+                 total = red + silver + mountain,
+                 valley = ifelse(valley == "E", "egl", "hol"),
+                 grid = paste(valley, grid.id),
+                 seedm2 = total/0.19635,
+                 logseed = log(seedm2)) %>%
+  select(valley,red,silver,seedm2, grid.id, grid, trip.no, year, month, total) %>%
+  filter(trip.no > 0)
+```
+
+### Find extra trips and grids
+
+```{r remove-trips}
+# for each year calculate the cumulative number of seeds
+seed.paper.1 <- seed.paper %>%
+            group_by(grid, year) %>%
+              mutate(cum.seed = cumsum(seedm2)) %>%
+                filter(trip.no > 0) %>%
+                  # arrange(grid, trip.no) %>%
+                    subset(!(grid.id %in% c("R1", "R2")))
+
+#these are trips that seed was collected but trapping was not done on these grids
+a <- bind_rows(subset(seed.paper.1, grid == "egl M2" & trip.no == "13"),
+               subset(seed.paper.1, grid == "egl M2" & trip.no == "14"),
+               subset(seed.paper.1, grid == "hol M1" & trip.no == "13"))
+```
+
+### Remove additional data
+
+```{r}
+seed.paper.2 <- anti_join(seed.paper.1,a) %>%
+              mutate(trip = trip.no,
+                     month = as.character(month),
+                     log.cum.seed = log10(cum.seed + 1))
+```
+
+## Final seed dataset
+
+This is the full raw data reduction for the publication and in all the analysis. This data is lagged by a single trip (as a proxy for seed to "intake rate" relationship). Descriptive plots can be found in appendix.
+
+```{r message=FALSE, warning=FALSE}
+# seed.paper.2
+```
+
+# Mice
+
+The mouse dataset is generated from the full CR model found [here]("https://www.ssnhub.com/jags-bayesian-model.html")
+
+## Import data
+
+The seed data above needs to be joined to the mouse dataset below. I will step through this process to insure that there are no errors in the merging of the two datasets.
+
+### JAGS output
+
+The output data of the model is in JAGS format. This means that it needs to be converted into a `dataframe` format. There are many different ways to do this. I have choosen the following tidy approach.
+
+```{r results-output, message=FALSE, warning=FALSE}
+# raw counts (ind) into CR model
+source("./R/wrangling/Data_CRinput_mice_jan2019.R", echo = FALSE)
+
+```
+
+We save and sort the bayesian model outputs in a `.rds` file and extract these results using:
+
+```{r, message=FALSE, warning=FALSE}
+#CR model output data
+CR.model.out<-readRDS("C://Code/final_cauchy_2_5.rds")
+```
+
+*JAGSui output* [@kellner2018].
+
+```{r jagsui-output}
+# for now this is hand selected...
+abund.dat <- data.frame(CR.model.out$summary[, c(1, 2, 3, 7)])
+```
+
+#### Naming variable
+
+```{r naming}
+#renaming variables
+names(abund.dat) <- c("N", "se.N", "lcl.N", "ucl.N")
+
+# adding para for each variable id
+abund.dat$var <- rownames(abund.dat)
+```
+
+#### Extract only N
+
+```{r extract-n}
+#reduce dataset to 136 or 144 rows
+## right now it is raw data
+abund.dat1 <- abund.dat %>%
+  filter(substr(var, 1, 1) == "N")
+```
+
+## Restructuring dataset
+
+```{r n-wrangling}
+#reduce dataset to 136 or 144 rows
+## right now it is raw data
+abund.dat1 <- abund.dat %>%
+  filter(substr(var, 1, 1) == "N") %>%
+  mutate(
+    grid = case_when(
+      str_detect(var, ",1]") ~ "egl M1",
+      str_detect(var, ",2]") ~ "egl M2",
+      str_detect(var, ",3]") ~ "egl MR1",
+      str_detect(var, ",4]") ~ "egl MR2",
+      str_detect(var, ",5]") ~ "hol M1",
+      str_detect(var, ",6]") ~ "hol M2",
+      str_detect(var, ",7]") ~ "hol MR1",
+      str_detect(var, ",8]") ~ "hol MR2",
+      TRUE ~ "other"
+    ),
+    trip = case_when(
+      str_detect(string = var, pattern = "N\\[1,") ~ 1,
+      str_detect(string = var, pattern = "N\\[2,") ~ 2,
+      str_detect(string = var, pattern = "N\\[3,") ~ 3,
+      str_detect(string = var, pattern = "N\\[4,") ~ 4,
+      str_detect(string = var, pattern = "N\\[5,") ~ 5,
+      str_detect(string = var, pattern = "N\\[6,") ~ 6,
+      str_detect(string = var, pattern = "N\\[7,") ~ 7,
+      str_detect(string = var, pattern = "N\\[8,") ~ 8,
+      str_detect(string = var, pattern = "N\\[9,") ~ 9,
+      str_detect(string = var, pattern = "N\\[10,") ~ 10,
+      str_detect(string = var, pattern = "N\\[11,") ~ 11,
+      str_detect(string = var, pattern = "N\\[12,") ~ 12,
+      str_detect(string = var, pattern = "N\\[13,") ~ 13,
+      str_detect(string = var, pattern = "N\\[14,") ~ 14,
+      str_detect(string = var, pattern = "N\\[15,") ~ 15,
+      str_detect(string = var, pattern = "N\\[16,") ~ 16,
+      str_detect(string = var, pattern = "N\\[17,") ~ 17,
+      str_detect(string = var, pattern = "N\\[18,") ~ 18,
+      str_detect(string = var, pattern = "N\\[19,") ~ 19,
+      str_detect(string = var, pattern = "N\\[20,") ~ 20
+    ),
+    grid.n = as.numeric(factor(grid)),
+    grid = factor(grid),
+    trip.no = trip,
+    valley = factor(ifelse(grepl("egl", grid), "egl", "hol"))
+  )
+```
+
+### Adding grouping variables
+
+```{r set-upmanuscript}
+abund.dat2 <- abund.dat1 %>%
+  mutate(control = case_when(
+    trip > 12 & valley == "hol" ~ "H+",
+    str_detect(string = valley, pattern = "egl") ~ "E+",
+    str_detect(string = grid, pattern = "hol") ~ "H-"
+  ),
+  Valley = valley)
+```
+
+```{r wrangling-code, eval=FALSE, include=FALSE}
+# RUN IN r
+# compareGroups::cGroupsGUI(abund.dat2)
+
+# ALL TRIP VARIABLES ARE NUMBERS AT THIS STAGE
+# WHAT TO DO???
+
+# names(abund.dat)
+# names(abund.dat1)
+# names(abund.dat2)
+
+
+#check data
+# summary(abund.dat5)
+# glimpse(abund.dat5)
+# Sorting factors for plots
+#nice labels
+# abund.dat5 %>%
+#   mutate(Rats = factor(Conditions, labels = c("Full", "Reduced")),
+#          Control = factor(control, labels = c("Yes", "No")),
+#          Valley = factor(valley, labels = c("Eglinton", "Hollyford")),
+#          Date = as.Date(true.date))
+```
+
+### Reduced seed joining dataset
+
+```{r joining-datasets}
+# ISSUE WITH trip == nonsense numbers
+# this is where months died maybe>!>!
+join.seed <- select(seed.paper.2, grid,trip, year, month, cum.seed, valley)
+```
+
+Check the structure of this to make sure that the variables being joined are being correctly merged.
+
+```{r}
+join.seed
+# glimpse(join.seed)
+# 
+# levels(join.seed$month)
+# labels(join.seed$month)
+
+# levels(abund.dat5$month)
+# labels(abund.dat5$month)
+# 
+# table(join.seed$month,abund.dat5$month)
+```
+
+
+### Joining seed and mice
+
+```{r}
+# full data
+
+abund.dat3 <- right_join(abund.dat2, join.seed, by = c("valley", "trip", "grid"))%>%
+# glimpse(abund.dat3)
+  mutate(seed.account.N = cum.seed / N,
+    # seed.paper = ifelse(cum.seed>0,cum.seed / N, cum.seed),
+    log.seed = ifelse(cum.seed > 0, log10(cum.seed), cum.seed),
+    control = NA)
+```
+
+# Stoat control
+
+**control variable**
+
+```{r control-variable}
+# Stoat control
+for (i in 1:length(abund.dat3$valley)) {
+  abund.dat3$control[i]  <-
+    ifelse(abund.dat3$valley[i] == "hol" &
+             abund.dat3$trip[i] > 12,
+           "control",
+           "no control")
+  abund.dat3$control[i]  <-
+    ifelse(abund.dat3$valley[i] == "egl", "control", abund.dat3$control[i])
+}
+```
+
+# Rat removal
+
+**treatment variable**
+
+```{r}
+grids.dat <-
+  colsplit(string = abund.dat3$grid,
+    pattern = " ",
+    names = c("valley.rep", "grid.rats")
+  )
+
+abund.dat4 <- abund.dat3 %>%
+  bind_cols(grids.dat) %>%
+  mutate(
+    grid.rats = factor(grid.rats, levels = c("M1", "M2", "MR1", "MR2")),
+    Conditions = ifelse(
+      grid.rats == "M1" | grid.rats == "M2",
+      "rats.removed",
+      "rats.present"
+    )
+  )
+
+# glimpse(abund.dat4)
+```
+
+# More grouping options
+
+```{r}
+# create variable for grouping
+abund.dat5 <- abund.dat4 %>%
+  mutate(grouping.1 = ifelse(N < 49, "treat.lowN", "treat.highN"),
+    grouping.2 = ifelse(N < 10, "treat.lowN", "treat.highN"),
+    grouping.3 = ifelse(
+      year == 2001 |
+        year == 2002 | year == 2004,
+      "treat.lowN",
+      "treat.highN"
+    ),
+    grouping.4 = ifelse(year == 2001 |
+                          year == 2002, "treat.lowN", "treat.highN"),
+    true.date = as.Date(factor(trip,labels = c("1999-05-01","1999-08-01","1999-11-01","2000-02-01","2000-05-01","2000-08-01","2000-11-01","2001-02-01","2001-05-01","2001-08-01", "2001-11-01","2002-05-01","2002-11-01","2003-02-01","2003-05-01","2003-08-01","2003-11-01","2004-02-01","2004-05-01","2004-08-01"))),
+    treat.six = paste(valley, control, Conditions)
+  )
+```
+
+# Re-leveling dataset
+
+Just a final check that everything has worked.
+
+```{r}
+# getting factor levels correct for once
+plot.dat.all1 <-  abund.dat5 %>%
+    mutate(Rats = factor(Conditions, labels = c("Full", "Reduced")),
+           Control = factor(control, labels = c("Yes", "No")),
+           Valley = factor(valley, labels = c("Eglinton", "Hollyford")),
+           Date = as.Date(true.date), 
+           Treatments = factor(treat.six, levels = c("hol no control rats.removed",
+                                                             "hol control rats.present", 
+                                                             "hol control rats.removed",
+                                                             "egl control rats.present",
+                                                             "egl control rats.removed" ,    
+                                                             "hol no control rats.present")),
+           Prediction = NA) %>%
+      mutate(Prediction = ifelse(Date == "2000-08-01", "A", Prediction),
+             Prediction = ifelse(Date == "2001-08-01" | 
+                                   Date == "2003-08-01" | 
+                                   Date == "2003-08-01" | 
+                                   Date == "2003-08-01" , "B", Prediction),
+             Prediction = ifelse(Date == "2001-08-01" | 
+                                   Date == "2003-08-01" | 
+                                   Date == "2003-08-01" | 
+                                   Date == "2003-08-01" , "B", Prediction),
+             Prediction = ifelse(Date == "2001-08-01" | 
+                                   Date == "2003-08-01" | 
+                                   Date == "2003-08-01" | 
+                                   Date == "2003-08-01" , "B", Prediction),
+             Prediction = ifelse(Date == "2001-08-01" | 
+                                   Date == "2003-08-01" | 
+                                   Date == "2003-08-01" | 
+                                   Date == "2003-08-01" , "B", Prediction))
+
+# overall larger points
+plot.dat.sum <- plot.dat.all1 %>%
+    mutate(counter = 1) %>%
+    group_by(Rats, Valley, Control) %>%
+    summarise(reps = sum(counter), 
+              max.date = max(Date),
+              min.date = min(Date))
+  
+plot.dat.sum1 <- plot.dat.sum %>%
+    gather(key = limit, 
+           value = Date, 
+           max.date:min.date) %>%
+    mutate(limit = factor(ifelse(limit == "max.date", "max", "min")),
+           treat = paste(Valley,Control, Rats)) %>%
+    ungroup()
+
+# table(plot.dat.sum1$Control)
+# plot labels
+#find in overall plot.dat by filtering on A?
+#april 2019
+
+labels.dat <- filter(plot.dat.all1, Prediction == "A" | Prediction == "B") 
+
+# %>% 
+#   distinct(Prediction, .keep_all = TRUE) %>%
+#     mutate(Valley = c("Hollyford", "Hollyford"))
+# glimpse(plot.dat.all1$Rats)
+
+# table(plot.dat.all1$Rats,plot.dat.all1$Control, plot.dat.all1$Valley)
+
+p.design <- plot.dat.all1 %>%
+  mutate(grid = as.numeric(factor(grid)))
+
+# glimpse(plot.dat.all1)
+```
+
+# Saved datasets
+
+I will save the final dataset for the analysis of the Beech foret data for the publication as so:
+The final plots. All extended plots are in the `Rcode/figures/`. These plots focus on simplifying the general trends and confirming any previous predictions.
+
+## Study design
+
+CR-design is complex and when treatments and conditions change through time it can be very hard to explain the data collection methods well. We have therefore constructed a diagram of the study design process.
+
+### Data
+
+```{r study-design-data}
+# study design plot
+# march 2019
+#anthony
+
+# need the manuscript code to run before this
+# data
+# dataset 1
+# summary by treatment
+plot.dat.sum <- abund.dat5 %>%
+    mutate(counter = 1) %>%
+      group_by(Conditions, valley, control) %>%
+        summarise(reps = sum(counter),
+                  max.date = max(true.date),
+                  min.date = min(true.date))
+
+plot.dat.sum1 <- plot.dat.sum %>%
+          gather(key = limit,
+                 value = true.date,
+                 max.date:min.date) %>%
+  mutate(limit = factor(ifelse(limit == "max.date", "max", "min")),
+         treat.six = factor(paste(valley, control, Conditions))) %>%
+      ungroup()
+
+#get all levels right
+levels(plot.dat.sum1$treat.six) <- c("hol no control rats.removed",
+                                 "hol control rats.present",
+                                 "hol control rats.removed",
+                                 "egl control rats.present",
+                                 "egl control rats.removed" ,
+                                 "hol no control rats.present")
+
+# names(plot.dat.sum1)
+
+# full replicates dataset (unique trips and grids)
+plot.dat.all <- abund.dat5 %>%
+  distinct(trip, grid, .keep_all = TRUE)
+
+# %>%
+    # select(Conditions, valley, control, true.date,treat.six, grid, N, N.seed,cum.seed)
+
+#get all levels right
+
+levels(plot.dat.all$treat.six) <- c("hol no control rats.removed",
+                                     "hol control rats.present",
+                                     "hol control rats.removed",
+                                     "egl control rats.present",
+                                     "egl control rats.removed" ,
+                                     "hol no control rats.present")
+
+
+# saving data -------------------------------------------------------------
+# csv the fuker!
+# write.csv(plot.dat.all, "study_design_plot.csv")
+# plot.study <- read.csv("study_design_plot.csv"
+
+# plot labels
+points.dat <- tibble(
+  prediction = as.character(c("A", "B", "A")),
+  valley = factor(c("egl", "hol", "hol")),
+  true.date = as.Date(c("2000-08-01","2001-08-01","2003-08-01")))
+
+# getting factor levels correct for once
+
+plot.dat.all1 <-  plot.dat.all %>%
+    mutate(Rats = factor(Conditions, labels = c("Full", "Reduced")),
+           Control = factor(control, labels = c("Yes", "No")),
+           Valley = factor(valley, labels = c("Eglinton", "Hollyford")),
+           Date = as.Date(true.date),
+           Treatments = factor(treat.six, levels = c("hol no control rats.removed",
+                                                             "hol control rats.present",
+                                                             "hol control rats.removed",
+                                                             "egl control rats.present",
+                                                             "egl control rats.removed" ,
+                                                             "hol no control rats.present")),
+           Prediction = NA) %>%
+      mutate(Prediction = ifelse(Date == "2000-08-01", "A", Prediction),
+             Prediction = ifelse(Date == "2001-08-01" |
+                                   Date == "2003-08-01" |
+                                   Date == "2003-08-01" |
+                                   Date == "2003-08-01" , "B", Prediction),
+             Prediction = ifelse(Date == "2001-08-01" |
+                                   Date == "2003-08-01" |
+                                   Date == "2003-08-01" |
+                                   Date == "2003-08-01" , "B", Prediction),
+             Prediction = ifelse(Date == "2001-08-01" |
+                                   Date == "2003-08-01" |
+                                   Date == "2003-08-01" |
+                                   Date == "2003-08-01" , "B", Prediction),
+             Prediction = ifelse(Date == "2001-08-01" |
+                                   Date == "2003-08-01" |
+                                   Date == "2003-08-01" |
+                                   Date == "2003-08-01" , "B", Prediction))
+
+# overall larger points
+plot.dat.sum <- plot.dat.all1 %>%
+    mutate(counter = 1) %>%
+    group_by(Rats, Valley, Control) %>%
+    summarise(reps = sum(counter),
+              max.date = max(Date),
+              min.date = min(Date))
+
+plot.dat.sum1 <- plot.dat.sum %>%
+    gather(key = limit,
+           value = Date,
+           max.date:min.date) %>%
+    mutate(limit = factor(ifelse(limit == "max.date", "max", "min")),
+           treat = paste(Valley,Control, Rats)) %>%
+    ungroup()
+
+# table(plot.dat.sum1$Control)
+# plot labels
+#find in overall plot.dat by filtering on A?
+#april 2019
+
+labels.dat <- filter(plot.dat.all1, Prediction == "A" |
+                       Prediction == "B")
+
+# %>%
+#   distinct(Prediction, .keep_all = TRUE) %>%
+#     mutate(Valley = c("Hollyford", "Hollyford"))
+
+# glimpse(plot.dat.all1$Rats)
+
+# table(plot.dat.all1$Rats,plot.dat.all1$Control, plot.dat.all1$Valley)
+
+p.design <- plot.dat.all1 %>%
+  mutate(grid = as.numeric(factor(grid)))
+
+# glimpse(plot.dat.all1)
+# kableExtra::kable(head(p.design))
+
+# export study design data
+write.csv(plot.dat.all1, "./Data/study-design-plot-input-data.csv")
+
+```
+
+### Plot
+
+```{r}
+p.design <- plot.dat.all1 %>%
+  mutate(grid = as.numeric(factor(grid)))
+
+# glimpse(plot.dat.all1)
+
+# adding NA grid to plot
+
+bd.row <- p.design[1,]
+bd.row$grid <- "blank"
+bd.row$grid <- "blank"
+bd.row$grid <- "blank"
+bd.row$grid <- "blank"
+bd.row$Date <- NA
+
+# bind row to plot data
+p.design145 <- rbind(p.design,bd.row)
+# glimpse(p.design145$grid)
+
+# labels
+rat.labs <- c("No", "Reduced")
+
+#re-factoring
+p.design1 <- p.design145  %>%
+                mutate(grid = factor(grid, levels = c("1","2","3","4","blank","5","6","7","8")),
+                       Rats = factor(Rats, labels = rat.labs))
+
+
+#checking
+# tail(p.design1)
+# tail(filter(p.design1, grid == "blank"))
+# levels(p.design1$grid)
+# labels() <- c("1","2","3","4"," ","5","6","7","8")
+
+# p.design1$grid <- factor(p.design1$grid,  labels = c("1","2","3","4"," ","1","2","3","4"))
+
+#plot
+fig.2.plot.design <-ggplot(
+  p.design1,
+  aes(
+    y = grid,
+    col = Rats,
+    shape = Valley,
+    fill = Control,
+    x = Date,
+    group = grid
+  ),
+  size = 4
+) +
+  geom_line(col = "grey50") +
+  geom_point(aes(size = Rats), stroke = 1.25) +
+
+  scale_color_manual(name = "Stoat Control",
+                     values = c("white", "black")) +
+
+  scale_shape_manual(name = "Ecosystem",
+                     values = c(24, 21)) +
+
+  # manually define the fill colours
+
+  scale_fill_manual(name = "Stoat Control",
+                    values = c("cornflowerblue", "darkorange")) +
+  geom_abline(intercept = 5, slope = 0, size = 1) +
+  # theme
+  theme_new() +
+
+
+# COMINE THEM -------------------------------------------------------------
+
+
+  # labels
+  scale_y_discrete(labels = c("1","2","3","4"," ","1","2","3","4")) +
+  # scale_x_date() +
+  # defining size with 2 marginally different values
+  scale_size_manual(name = "Rat Control", values = c(4, 3)) +
+
+  # Remove fill legend and replace the fill legend using the newly created size
+  guides(
+    col = "none",
+    size = guide_legend(override.aes = list(
+      shape = c(15,0),alpha = 1
+    )),
+    shape = guide_legend(override.aes = list(
+      shape = c(24, 21), size = 4
+    )),
+    fill = guide_legend(override.aes = list(
+      col = c("cornflowerblue", "darkorange"),shape = c("square"),
+      size = 4
+    ))
+  ) +
+  xlab("Timing of sample") +
+  ylab("Grid Location")
+
+fig.2.plot.design
+
+```
+
+### Saving
+
+```{r message=FALSE, warning=FALSE}
+# export plot for example vignette
+png("../figs/fig-2-study.png")
+fig.2.plot.design
+dev.off()
+```
+
+## Seed
+
+### Data
+
+```{r saving-mod-data}
+# turn seed.paper.2 into plot
+# for publication
+# May2019
+
+# names(abund.dat5)
+
+# Valley and Control summaries
+seed.2mean <- plot.dat.all1 %>%
+  group_by(Control, Valley, Date) %>%
+  summarise(
+    mean.s = mean(cum.seed),
+    sd.s = sd(cum.seed),
+    se.s = sd(cum.seed) / sqrt(length(cum.seed)) * 1.96,
+    lcl.s = mean(cum.seed) - (sd(cum.seed) / sqrt(length(cum.seed)) *
+                                1.96),
+    ucl.s = mean(cum.seed) + (sd(cum.seed) / sqrt(length(cum.seed)) *
+                                1.96)
+  ) %>%
+  ungroup()
+
+# Valley, control and Conditions summaries
+seed.2mean <- plot.dat.all1 %>%
+  group_by(Control, Valley, Date) %>%
+  summarise(
+    mean.s = mean(cum.seed),
+    sd.s = sd(cum.seed),
+    se.s = sd(cum.seed) / sqrt(length(cum.seed)) * 1.96,
+    lcl.s = mean(cum.seed) - (sd(cum.seed) / sqrt(length(cum.seed)) *
+                                1.96),
+    ucl.s = mean(cum.seed) + (sd(cum.seed) / sqrt(length(cum.seed)) *
+                                1.96)
+  ) %>%
+  ungroup()
+```
+
+```{r}
+# study design plot
+# may 2019
+#anthony
+
+source("./R/davidson_2019_theme.r")
+# source("./R/figures/study-design-data.R")
+
+p.design <- plot.dat.all1 %>%
+  mutate(grid = as.numeric(factor(grid)))
+
+# glimpse(plot.dat.all1)
+
+# adding NA grid to plot
+
+bd.row <- p.design[1, ]
+bd.row$grid <- "blank"
+bd.row$grid <- "blank"
+bd.row$grid <- "blank"
+bd.row$grid <- "blank"
+bd.row$Date <- NA
+
+# bind row to plot data
+p.design145 <- rbind(p.design, bd.row)
+# glimpse(p.design145$grid)
+
+# labels
+rat.labs <- c("No", "Reduced")
+
+#re-factoring
+p.design1 <- p.design145  %>%
+  mutate(grid = factor(grid, levels = c(
+    "1", "2", "3", "4", "blank", "5", "6", "7", "8"
+  )),
+  Rats = factor(Rats, labels = rat.labs))
+
+#checking
+# tail(p.design1)
+# tail(filter(p.design1, grid == "blank"))
+# levels(p.design1$grid)
+# labels() <- c("1","2","3","4"," ","5","6","7","8")
+
+# p.design1$grid <- factor(p.design1$grid,  labels = c("1","2","3","4"," ","1","2","3","4"))
+```
+
+```{r}
+# kableExtra::kable(head(seed.2mean))
+```
+
+
+### Plot
+
+#### All seed data
+
+```{r}
+#plot raw seed
+fig.3.plot.seed <- ggplot(p.design1,
+                          aes(
+                            y = cum.seed,
+                            col = Rats,
+                            shape = Valley,
+                            fill = Control,
+                            x = Date
+                          ),
+                          size = 4) +
+  # geom_line(col = "grey50") +
+  geom_point(aes(size = Rats,
+                 group = grid), stroke = 1.25) +
+
+  scale_color_manual(name = "Stoat Control",
+                     values = c("white", "black")) +
+
+  scale_shape_manual(name = "Ecosystem",
+                     values = c(24, 21)) +
+
+  # manually define the fill colours
+
+  scale_fill_manual(name = "Stoat Control",
+                    values = c("cornflowerblue", "darkorange")) +
+  # geom_abline(intercept = 5, slope = 0, size = 1) +
+  # theme
+  theme_new() +
+
+  scale_size_manual(name = "Rat Control", values = c(4, 3)) +
+  # labels
+  # scale_y_discrete(labels = c("1","2","3","4"," ","1","2","3","4")) +
+  # scale_x_date() +
+  # defining size with 2 marginally different values
+
+  # Remove fill legend and replace the fill legend using the newly created size
+  guides(
+    col = "none",
+    size = guide_legend(override.aes = list(shape = c(16, 1))),
+    shape = guide_legend(override.aes = list(
+      shape = c(24, 21), size = 4
+    )),
+    fill = guide_legend(override.aes = list(
+      col = c("cornflowerblue", "darkorange"),
+      size = 4
+    ))
+  ) +
+
+xlab(expression(paste("Time", "(", italic(t), ")"))) +
+
+  ylab(expression(paste("Available seed ", "(", italic(Seed[jt]), ")")))
+
+fig.3.plot.seed
+```
+
+#### Summarising
+
+I have done this by grouping dataset into the three key treatments (with and without stoat control in the Hollyford Valley and stoat control in the Eglinton Valley).
+
+```{r seed-summary-data}
+# sorting summary dataset for the last time -------------------------------
+#summarising seed
+# table(is.na(p.design1$grid))
+#remove NA for making space in last plot
+p.design1 <- p.design1[1:144, ]
+#no grid na anymore
+# table(is.na(p.design1$grid))
+
+#making datasest
+p.design2 <- p.design1 %>%
+  group_by(Control, Valley, Date) %>%
+  summarise(N = mean(cum.seed),
+            Rats = factor("Full", levels = c("Full", "Reduced")),
+            sd.s = sd(cum.seed, na.rm = TRUE),
+    se.s = sd(cum.seed) / sqrt(length(cum.seed)) * 1.96,
+    lcl.s = mean(cum.seed) - (sd(cum.seed) / sqrt(length(cum.seed)) *
+                                1.96),
+    lcl.slog = NA,
+    ucl.s = mean(cum.seed) + (sd(cum.seed) / sqrt(length(cum.seed)) *
+                                1.96),
+    ucl.slog = NA) %>%
+  ungroup() %>%
+  mutate(cum.seed = N,
+         grid = factor(paste(Control, Valley)))
+
+
+
+# glimpse(p.design2)
+#plot summary seed
+
+# Add NA so legend works
+row.input.leg <- p.design2[1, ]
+row.input.leg$Control <- NA
+row.input.leg$Valley <- NA
+row.input.leg$Date <- NA
+row.input.leg$cum.seed <- NA
+row.input.leg$Rats <- "Reduced"
+row.input.leg$grid <- NA
+
+p.design3 <- rbind(p.design2, row.input.leg)
+# col = c("cornflowerblue", "darkorange")
+
+# kableExtra::kable(head(p.design2))
+```
+
+```{r old-plot}
+# sorting summary dataset for the last time -------------------------------
+#summarising seed
+# table(is.na(p.design1$grid))
+#remove NA for making space in last plot
+p.design1 <- p.design1[1:144, ]
+#no grid na anymore
+# table(is.na(p.design1$grid))
+
+#making datasest
+p.design2 <- p.design1 %>%
+  group_by(Control, Valley, Date) %>%
+  summarise(N = mean(cum.seed),
+            Rats = factor("Full", levels = c("Full", "Reduced")),
+            sd.s = sd(cum.seed, na.rm = TRUE),
+    se.s = sd(cum.seed) / sqrt(length(cum.seed)) * 1.96,
+    lcl.s = mean(cum.seed) - (sd(cum.seed) / sqrt(length(cum.seed)) *
+                                1.96),
+    ucl.s = mean(cum.seed) + (sd(cum.seed) / sqrt(length(cum.seed)) *
+                                1.96)
+  ) %>%
+  ungroup()%>%
+  mutate(grid = factor(paste(Control, Valley)),
+         cum.seed = N)
+
+# grouping of grid correct?
+# levels(p.design2$grid)
+# p.design2$Rats
+
+# glimpse(p.design2)
+#plot summary seed
+
+# Add NA so legend works
+row.input.leg <- p.design2[1, ]
+row.input.leg$Control <- NA
+row.input.leg$Valley <- NA
+row.input.leg$Date <- NA
+row.input.leg$cum.seed <- NA
+row.input.leg$Rats <- "Reduced"
+row.input.leg$grid <- NA
+
+p.design3 <- rbind(p.design2, row.input.leg)
+col = c("cornflowerblue", "darkorange")
+
+fig.3.plot.seed.sum <- ggplot(p.design2,
+                              aes(
+                                y = cum.seed,
+                                col = Rats,
+                                shape = Valley,
+                                fill = Control,
+                                x = Date
+                              ),
+                              size = 4) +
+  geom_line(col = "grey50") +
+  geom_point(aes(size = Rats,
+                 group = grid), stroke = 1.25) +
+
+  scale_color_manual(name = "Stoat Control",
+                     values = c("white", "black")) +
+
+  scale_shape_manual(name = "Ecosystem",
+                     values = c(24, 21)) +
+
+  scale_size_manual(name = "Rat Control", values = c(4, 3)) +
+  scale_fill_manual(name = "Stoat Control",
+                    values = c("cornflowerblue", "darkorange")) +
+  theme_new() +
+  # geom_errorbar(data = p.design2, aes(ymin = lcl.s, ymax = ucl.s, width = 0), lwd = 1.1) +
+  guides(
+    col = "none",
+    size = "none",
+    shape = guide_legend(override.aes = list(
+      shape = c(24, 21), size = 4
+    )),
+    fill = guide_legend(override.aes = list(
+      col = c("cornflowerblue", "darkorange"),shape = c("square"),
+      size = 4
+    ))
+  ) +
+xlab(expression(paste("Time", "(", italic(t), ")"))) +
+ylab(expression(paste("Available seed ", "(", italic(Seed[jt]), ")")))
+
+fig.3.plot.seed.sum
+
+```
+
+##### Raw confidence intervals
+
+```{r conf-intervals-below-zero}
+fig.3.plot.seed.sum <- ggplot(p.design2,
+                              aes(
+                                y = cum.seed,
+                                col = Rats,
+                                shape = Valley,
+                                fill = Control,
+                                x = Date
+                              ),
+                              size = 4) +
+  geom_errorbar(data = p.design2, aes(ymin = lcl.s, ymax = ucl.s, width = 0), lwd = 1.1, col = "black") +
+  geom_line(col = "grey50") +
+  geom_point(aes(size = Rats,
+                 group = grid), stroke = 1.25) +
+
+  scale_color_manual(name = "Stoat Control",
+                     values = c("white", "black")) +
+
+  scale_shape_manual(name = "Ecosystem",
+                     values = c(24, 21)) +
+
+  scale_size_manual(name = "Rat Control", values = c(4, 3)) +
+  scale_fill_manual(name = "Stoat Control",
+                    values = c("cornflowerblue", "darkorange")) +
+  theme_new() +
+
+  guides(
+    col = "none",
+    size = "none",
+    shape = guide_legend(override.aes = list(
+      shape = c(24, 21), size = 4
+    )),
+    fill = guide_legend(override.aes = list(
+      col = c("cornflowerblue", "darkorange"),shape = c("square"),
+      size = 4
+    ))
+  ) +
+xlab(expression(paste("Time", "(", italic(t), ")"))) +
+ylab(expression(paste("Available seed ", "(", italic(Seed[jt]), ")")))
+
+fig.3.plot.seed.sum
+```
+
+##### Log transformation to remove less and zero seed...
+
+```{r conf-intervals-above-zero}
+#making datasest
+p.design2 <- p.design1 %>%
+  group_by(Control, Valley, Date) %>%
+  summarise(N = mean(ifelse(cum.seed > 0, ifelse(cum.seed > 0, log(cum.seed), 0), 0)),
+            Rats = factor("Full", levels = c("Full", "Reduced")),
+            sd.s = sd(ifelse(cum.seed > 0, log(cum.seed), 0), na.rm = TRUE),
+    se.s = sd(ifelse(cum.seed > 0, log(cum.seed), 0)) / sqrt(length(cum.seed)) * 1.96,
+    lcl.s = mean(ifelse(cum.seed > 0, log(cum.seed), 0)) - (sd(ifelse(cum.seed > 0, log(cum.seed), 0)) / sqrt(length(cum.seed)) *
+                                1.96),
+    lcl.slog = exp(lcl.s),
+    ucl.s = mean(ifelse(cum.seed > 0, log(cum.seed), 0)) + (sd(ifelse(cum.seed > 0, log(cum.seed), 0)) / sqrt(length(cum.seed)) *
+                                1.96),
+    ucl.slog = exp(ucl.s)) %>%
+  ungroup() %>%
+  mutate(cum.seed = exp(N),
+         grid = factor(paste(Control, Valley)))
+
+fig.3.plot.seed.sum.final <- ggplot(p.design2,
+                              aes(
+                                y = cum.seed,
+                                col = Rats,
+                                shape = Valley,
+                                fill = Control,
+                                x = Date
+                              ),
+                              size = 4) +
+  geom_errorbar(data = p.design2, aes(ymin = lcl.slog, ymax = ucl.slog, width = 0), lwd = 1.1, col = "black") +
+  geom_line(col = "grey50") +
+  geom_point(aes(size = Rats,
+                 group = grid), stroke = 1.25) +
+
+  scale_color_manual(name = "Stoat Control",
+                     values = c("white", "black")) +
+
+  scale_shape_manual(name = "Ecosystem",
+                     values = c(24, 21)) +
+
+  scale_size_manual(name = "Rat Control", values = c(4, 3)) +
+  scale_fill_manual(name = "Stoat Control",
+                    values = c("cornflowerblue", "darkorange")) +
+  theme_new() +
+
+  guides(
+    col = "none",
+    size = "none",
+    shape = guide_legend(override.aes = list(
+      shape = c(24, 21), size = 4
+    )),
+    fill = guide_legend(override.aes = list(
+      col = c("cornflowerblue", "darkorange"),shape = c("square"),
+      size = 4
+    ))
+  ) +
+xlab(expression(paste("Time", "(", italic(t), ")"))) +
+ylab(expression(paste("Available seed ", "(", italic(Seed[jt]), ")")))
+
+fig.3.plot.seed.sum.final
+```
+
+##### Combing plots
+
+Orginal data seems too messy so have reverted to the summary plot above.
+
+```{r combining-plots-old}
+#plot raw seed
+fig.3.seed <- ggplot(p.design1,
+                     aes(
+                       y = cum.seed,
+                       col = Rats,
+                       shape = Valley,
+                       fill = Control,
+                       x = Date
+                     )) +
+  geom_point(aes(size = Rats,
+                 group = grid),
+             stroke = 1.25,
+             alpha = 0.5) +
+  scale_color_manual(name = "Stoat Control",
+                     values = c("white", "black", "white")) +
+
+  scale_shape_manual(name = "Ecosystem",
+                     values = c(24, 21)) +
+  scale_size_manual(name = "Rat Control", values = c(2.5, 3, 2.5)) +
+  scale_fill_manual(
+    name = "Stoat Control",
+    values = c("cornflowerblue", "darkorange", "cornflowerblue")
+  ) +
+  geom_line(
+    data = p.design2,
+    aes(y = cum.seed,
+        x = Date),
+    size = 0.95,
+    col = "grey50"
+  ) +
+
+  geom_point(
+    data = p.design2,
+    aes(
+      y = cum.seed,
+      col = Rats,
+      shape = Valley,
+      fill = Control,
+      x = Date
+    ),
+    size = 7
+  ) +
+    geom_errorbar(data = p.design2, aes(ymin = lcl.s, ymax = ucl.s, width = 0), lwd = 1.1) +
+  # Remove fill legend and replace the fill legend using the newly created size
+  guides(
+    col = "none",
+    size = guide_legend(override.aes = list(
+  shape = c(15,0),alpha = 1
+    )),
+    shape = guide_legend(override.aes = list(
+      shape = c(24, 21), size = 4
+    )),
+    fill = guide_legend(override.aes = list(
+      col = c("cornflowerblue", "darkorange"),shape = c("square"),
+      size = 4
+    ))
+  ) +
+
+  xlab(expression(paste("Timing of sample", "(", italic(t), ")"))) +
+
+  ylab(expression(paste("Available seed ", "(", italic(Seed[jt]), ")")))
+
+fig.3.seed
+```
+
+##### Final plot
+
+```{r}
+# fig.3.plot.seed.sum.final
+
+# jitter everything the same is harrrrrd
+location.move <- position_dodge(width = 20)
+
+# plot
+plot.final.f3.1 <- ggplot(p.design2,
+                              aes(
+                                y = cum.seed,
+                                col = Rats,
+                                shape = Valley,
+                                fill = Control,
+                                x = Date
+                              ),
+                              size = 4) +
+geom_rect(aes(xmin=ymd('2000-01-01'),xmax = ymd('2000-12-31'),ymin = -Inf,ymax = Inf), colour = "grey90", fill = "grey90") +
+  geom_rect(aes(xmin=ymd('2002-01-01'),xmax = ymd('2002-12-31'),ymin = -Inf,ymax = Inf), colour = "grey90", fill = "grey90") +
+  geom_rect(aes(xmin=ymd('2004-01-01'),xmax = ymd('2004-12-31'),ymin = -Inf,ymax = Inf), colour = "grey90", fill = "grey90") +
+  
+  geom_errorbar(aes(ymin = lcl.slog, ymax = ucl.slog, width = 0), lwd = 0.7, col = "black", position = location.move, alpha = 0.7) +
+
+  geom_line(col = "grey50") +
+  geom_point(aes(y = cum.seed,
+                                x = Date
+                              ),size = 5, stroke = 1.25, position = location.move) +
+
+  scale_color_manual(name = "Stoat Control",
+                     values = c("white", "black")) +
+
+  scale_shape_manual(name = "Ecosystem",
+                     values = c(24, 21)) +
+
+  scale_fill_manual(name = "Stoat Control",
+                    values = c("cornflowerblue", "darkorange")) +
+  guides(
+    col = "none",
+    size = "none",
+    shape = guide_legend(override.aes = list(
+      shape = c(24, 21), size = 4
+    )),
+    fill = guide_legend(override.aes = list(
+      col = c("cornflowerblue", "darkorange"),shape = c("square"),
+      size = 4
+    ))
+  ) +
+xlab(expression(paste("Time", "(", italic(t), ")"))) +
+ylab(expression(paste("Available seed ", "(", italic(Seed[jt]), ")")))
+plot.final.f3.1
+```
+
+### Saving
+
+#### Data
+
+```{r}
+# save csv file
+write.csv(p.design2, "./data/seed-summary-data-june2019.csv")
+
+```
+
+#### Figure
+
+```{r}
+# export plot for example vignette
+png("../figs/fig-3.1.png")
+plot.final.f3.1
+dev.off()
+```
+
+## Mice
+
+### Data
+
+```{r}
+# By grid plot
+# Base plot code
+# May2019 fully sorted
+
+
+# # Can I turn this into a function I can use to select either one of 3 different estimates of abundance into
+# # seed, density, rats?
+# meanS <- dat.msr.1 %>%
+#   filter(spp == "seed") %>%
+#   mutate(true.date = as.Date(true.date),
+#          mean.s = est.dat)
+#
+# #comes from summary Rscript.
+# # source(./R/figures/summar...)
+# meanS.1 <- mean1 %>%
+#   filter(spp == "seed")  %>%
+#   mutate(true.date = as.Date(true.date))
+
+# Cleaning up total dataset
+# plot.dat.all1 # already done!
+
+# summaries
+mouse.mean <- plot.dat.all1 %>%
+  group_by(Control, Valley, Date) %>%
+  summarise(
+    mean.s = mean(N),
+    sd.s = sd(N),
+    se.s = sd(N) / sqrt(length(N)) * 1.96,
+    lcl.s = mean(N) - (sd(N) / sqrt(length(N)) *
+                                1.96),
+    ucl.s = mean(N) + (sd(N) / sqrt(length(N)) *
+                                1.96)
+  ) %>%
+  ungroup()
+
+mouse.mean <- mouse.mean %>%
+  mutate(
+    gp.treat = factor(paste(Valley, Control)),
+    N = mean.s,
+    Rats = factor("Full")
+  )
+
+# sorting summary dataset for the last time -------------------------------
+#summarising seed
+# table(is.na(p.design1$grid))
+#remove NA for making space in last plot
+p.design1 <- p.design1[1:144, ]
+#no grid na anymore
+# table(is.na(p.design1$grid))
+
+#making datasest
+p.design2 <- p.design1 %>%
+  group_by(Control, Valley, Date) %>%
+  summarise(N = mean(N),
+            Rats = factor("Full", levels = c("Full", "Reduced"))) %>%
+  ungroup() %>%
+  mutate(grid = factor(paste(Control, Valley)))
+
+# grouping of grid correct?
+# levels(p.design2$grid)
+# p.design2$Rats
+
+# glimpse(p.design2)
+
+#making datasest
+p.design2 <- p.design1 %>%
+  group_by(Control, Valley, Date) %>%
+  summarise(N.test = mean(ifelse(N > 0, ifelse(N > 0, log(N), 0), 0)),
+            Rats = factor("Full", levels = c("Full", "Reduced")),
+            sd.s = sd(ifelse(N > 0, log(N), 0), na.rm = TRUE),
+    se.s = sd(ifelse(N > 0, log(N), 0)) / sqrt(length(N)) * 1.96,
+    lcl.s = mean(ifelse(N > 0, log(N), 0)) - (sd(ifelse(N > 0, log(N), 0)) / sqrt(length(N)) *
+                                1.96),
+    lcl.slog = exp(lcl.s),
+    ucl.s = mean(ifelse(N > 0, log(N), 0)) + (sd(ifelse(N > 0, log(N), 0)) / sqrt(length(N)) *
+                                1.96),
+    ucl.slog = exp(ucl.s)) %>%
+  ungroup() %>%
+  mutate(N = exp(N.test),grid = factor(paste(Control, Valley)))
+
+```
+
+```{r}
+kableExtra::kable(head(mouse.mean))
+```
+
+<!-- ### Plot -->
+
+<!-- ```{r old-mice} -->
+<!-- # By grid plot -->
+<!-- # Base plot code -->
+<!-- source("./R/wrangling/Data_CRinput_mice_jan2019.R") -->
+<!-- source("./R/figures/summary-data-code.R") -->
+<!-- # Can I turn this into a function I can use to select either one of 3 different estimates of abundance into -->
+<!-- # seed, density, rats? -->
+<!-- meanM <- dat.msr.1 %>% -->
+<!--   filter(spp == "mice") %>% -->
+<!--   mutate(true.date = as.Date(true.date), -->
+<!--          mean.s = est.dat) -->
+
+<!-- meanM.1 <- mean1 %>% -->
+<!--   filter(spp == "mice")  %>% -->
+<!--   mutate(true.date = as.Date(true.date)) -->
+
+<!-- mice.aver.plot <- -->
+<!--   ggplot(data = meanM.1, -->
+<!--          aes(y = mean.s, -->
+<!--              x = true.date,col = Conditions, shape = valley, fill = Conditions)) + -->
+<!--   # extra goodies -->
+<!--   geom_rect(aes( -->
+<!--     xmin = ymd('2000-01-01'), -->
+<!--     xmax = ymd('2000-12-31'), -->
+<!--     ymin = -Inf, -->
+<!--     ymax = Inf -->
+<!--   ), -->
+<!--   colour = "grey90", -->
+<!--   fill = "grey90") + -->
+
+<!--   geom_rect(aes( -->
+<!--     xmin = ymd('2002-01-01'), -->
+<!--     xmax = ymd('2002-12-31'), -->
+<!--     ymin = -Inf, -->
+<!--     ymax = Inf -->
+<!--   ), -->
+<!--   colour = "grey90", -->
+<!--   fill = "grey90") + -->
+
+<!--   geom_rect(aes( -->
+<!--     xmin = ymd('2004-01-01'), -->
+<!--     xmax = ymd('2004-12-31'), -->
+<!--     ymin = -Inf, -->
+<!--     ymax = Inf -->
+<!--   ), -->
+<!--   colour = "grey90", -->
+<!--   fill = "grey90") + -->
+
+<!--   geom_point(data = meanM, aes(col = Conditions, shape = valley, fill = Conditions), size = 2, alpha = 0.3) + -->
+<!--   geom_line(data = meanM.1, aes(group = Conditions, col = Conditions), size = 0.9, alpha = 0.8) + -->
+<!--   # geom_errorbar(data = meanM.1, mapping = aes(ymin = lcl.s, ymax = ucl.s), width = 0, alpha = 0.5, lwd = 0.75) + -->
+
+<!--   geom_point(data = meanM.1, aes(y = mean.s, -->
+<!--                                  x = true.date,shape = valley), stroke = 1.5, size = 3) + -->
+
+<!--   scale_shape_manual(name = "Valley", -->
+<!--                      labels = c("E", "H"), -->
+<!--                      values = c(25,21)) + -->
+
+<!--   scale_colour_manual(name = "Stoat control", -->
+<!--                       labels = c("Eglinton", "Hollyford", "Hollyford"), -->
+<!--                       values = c("darkgoldenrod","black", "black")) + -->
+<!--   scale_fill_manual(name = "Stoat control", -->
+<!--                     labels = c("Yes", "No", "Yes"), -->
+<!--                     values = c("black","black", "darkgoldenrod")) + -->
+
+<!--   geom_hline(yintercept = 0, -->
+<!--              lty = 5, -->
+<!--              alpha = 0.7)  + -->
+
+<!--   xlab(expression(paste("Time","(",italic(t),")"))) + -->
+
+<!--   ylab(expression(atop(paste("Mouse "," ", " Abundance"," "), -->
+<!--                        paste("(",italic(N[jt]),")")))) -->
+
+<!-- mice.aver.plot <- mice.aver.plot +  theme(strip.background = element_blank(), -->
+<!--                                           strip.text.y = element_blank(), -->
+
+<!--                                           plot.title = element_text(hjust = 0, size=24, family = "Times", color="black", margin = margin(t = 10, b = 10)), -->
+<!--                                           plot.subtitle=element_text(size=16, face="italic", color="black"), -->
+
+<!--                                           legend.position = "none", -->
+<!--                                           legend.key = element_blank(), -->
+<!--                                           legend.background = element_rect(fill="white", size=1), -->
+<!--                                           legend.key.size=unit(1,"cm"), -->
+<!--                                           legend.text = element_text(colour = "black", size =16, family = "Times"), -->
+<!--                                           legend.title = element_text(colour = "black", size =16, family = "Times"), -->
+
+<!--                                           panel.grid.major = element_blank(), -->
+<!--                                           panel.grid.minor = element_blank(), -->
+<!--                                           panel.spacing = unit(2, "lines"), -->
+<!--                                           panel.border = element_blank(), -->
+
+<!--                                           axis.title.y = element_text(colour = "black",size =20, family = "Times", angle = 90), -->
+<!--                                           axis.title.x = element_text(colour = "black", size =20, family = "Times"), -->
+<!--                                           axis.text.y=element_text(colour = "black",size = 20, family = "Times"), -->
+<!--                                           axis.text.x = element_text(colour = "black", size =20, family = "Times"), -->
+
+<!--                                           axis.ticks.x = element_line(size = 1), -->
+<!--                                           axis.ticks.y = element_line(size = 1), -->
+<!--                                           axis.line.x = element_line(size = 1), -->
+<!--                                           axis.line.y = element_line(size = 1), -->
+
+<!--                                           strip.text = element_text(face="bold",colour = "black",size =14, family = "Times")) -->
+
+<!-- ``` -->
+
+
+```{r new-mice}
+# plot raw seed
+fig.3.N <-
+  ggplot(p.design2,
+                     aes(
+                       y = N,
+                       col = Rats,
+                       shape = Valley,
+                       fill = Control,
+                       x = Date
+                     )) +
+  geom_rect(aes(xmin=ymd('2000-01-01'),xmax = ymd('2000-12-31'),ymin = -Inf,ymax = Inf), colour = "grey90", fill = "grey90") +
+  geom_rect(aes(xmin=ymd('2002-01-01'),xmax = ymd('2002-12-31'),ymin = -Inf,ymax = Inf), colour = "grey90", fill = "grey90") +
+  geom_rect(aes(xmin=ymd('2004-01-01'),xmax = ymd('2004-12-31'),ymin = -Inf,ymax = Inf), colour = "grey90", fill = "grey90") +
+  
+  geom_errorbar(aes(ymin = lcl.slog, ymax = ucl.slog, width = 0), lwd = 0.7, col = "black", position = location.move, alpha = 0.7) +
+
+  geom_line(col = "grey50") +
+  geom_point(aes(y = N,
+                                x = Date
+                              ),size = 5, stroke = 1.25, position = location.move) +
+
+  scale_color_manual(name = "Stoat Control",
+                     values = c("white", "black")) +
+
+  scale_shape_manual(name = "Ecosystem",
+                     values = c(24, 21)) +
+
+  scale_fill_manual(name = "Stoat Control",
+                    values = c("cornflowerblue", "darkorange")) +
+  guides(
+    col = "none",
+    size = "none",
+    shape = guide_legend(override.aes = list(
+      shape = c(24, 21), size = 4
+    )),
+    fill = guide_legend(override.aes = list(
+      col = c("cornflowerblue", "darkorange"),shape = c("square"),
+      size = 4
+    ))
+  ) +
+xlab(expression(paste("Time", "(", italic(t), ")"))) +
+ylab(expression(paste("Mouse abundance ", " (", italic(N[jt]), ")")))
+
+fig.3.N
+```
+
+### Saving
+
+```{r writing-csvs, eval=FALSE, include=FALSE}
+write.csv(p.design2, "./data/mouse-summary-data.csv")
+```
+
+```{r}
+# export plot for example vignette
+png("../figs/fig-3.2.png")
+fig.3.N
+dev.off()
+```
+
+## Rats
+
+### Data
+
+```{r data-rats}
+# Cleaning up total dataset
+plot.dat.all1  <- plot.dat.all1 %>%
+  mutate(trip = as.character(trip))# already done!
+
+# rats have only 80 estimates not 144
+meanR <- read_csv("C://Code/data/mna_allrat.csv") %>%
+  select (valley, grid ,trip.no ,n) %>%
+  # select (grid ,trip.no ,n) %>%
+  mutate(trip = as.character(trip.no),
+            grid = grid,
+            rat.mna = n,
+         Valley = factor(valley, labels = c("Eglinton", "Hollyford")))
+
+joined.rats <- left_join(plot.dat.all1, meanR, by = c("grid", "Valley", "trip"))
+
+# summaries
+rat.mean <- joined.rats %>%
+  group_by(Control, Valley, Date) %>%
+  summarise(mean.rat = mean(rat.mna, na.rm = TRUE),
+    sd.rat = sd(rat.mna, na.rm = TRUE),
+    se.rat = sd.rat / sqrt(length(rat.mna)) * 1.96,
+    lcl.rat = mean.rat - (sd.rat / sqrt(length(rat.mna)) *
+                                1.96),
+    ucl.rat = mean.rat + (sd.rat / sqrt(length(rat.mna)) *
+                                1.96)
+  ) %>%
+  ungroup() %>%
+  mutate(Valley = Valley,
+    gp.treat = factor(paste(Valley, Control)),
+    N = mean.rat,
+    Rats = factor("Full")
+  )
+
+glimpse(joined.rats)
+```
+
+```{r}
+kableExtra::kable(head(rat.mean))
+```
+
+
+### Plot
+
+```{r plot-rats}
+#plot raw seed
+fig.3.rat <- ggplot(joined.rats,
+                     aes(
+                       y = rat.mna,
+                       col = Rats,
+                       shape = Valley,
+                       fill = Control,
+                       x = Date
+                     )) +
+  # geom_line(col = "grey50") +
+  geom_point(aes(size = Rats),
+             stroke = 1.25,
+             alpha = 0.5) +
+
+  scale_color_manual(name = "Stoat Control",
+                     values = c("white", "black", "white")) +
+
+  scale_shape_manual(name = "Ecosystem",
+                     values = c(24, 21)) +
+
+  scale_size_manual(name = "Rat Control", values = c(2.5, 3, 2.5)) +
+  # manually define the fill colours
+
+  scale_fill_manual(
+    name = "Stoat Control",
+    values = c("cornflowerblue", "darkorange", "cornflowerblue")
+  ) +
+
+
+  geom_line(
+    data = rat.mean,
+    aes(y = mean.rat,
+        x = Date),
+    size = 0.95,
+    col = "grey50"
+  ) +
+
+  geom_point(
+    data = rat.mean,
+    aes(
+      y = mean.rat,
+      col = Rats,
+      shape = Valley,
+      fill = Control,
+      x = Date
+    ),
+    size = 7
+  ) +
+
+  # Remove fill legend and replace the fill legend using the newly created size
+  guides(
+    col = "none",
+    size = guide_legend(override.aes = list(
+      shape = c(15,0),alpha = 1
+    )),
+    shape = guide_legend(override.aes = list(
+      shape = c(24, 21), size = 4
+    )),
+    fill = guide_legend(override.aes = list(
+      col = c("cornflowerblue", "darkorange"),shape = c("square"),
+      size = 4
+    ))
+  ) +
+
+  xlab(expression(paste("Time", "(", italic(t), ")"))) +
+
+  ylab(expression(atop(paste("Minimum "," ", " number"," "),
+                       paste(" ", "of"," ",
+                             "rats"," ","(",italic(R[jt]),")"))) )
+
+fig.3.rat
+```
+
+```{r old-rats}
+# plot rat CIs
+ggplot(rat.mean,
+                     aes(
+                       y = N,
+                       col = Rats,
+                       shape = Valley,
+                       fill = Control,
+                       x = Date
+                     )) +
+   geom_errorbar(aes(ymin = lcl.rat, ymax = ucl.rat, width = 0), lwd = 0.7, col = "black", position = location.move) +
+  geom_point(stroke = 1.25, position = location.move) +
+
+  scale_color_manual(name = "Stoat Control",
+                     values = c("white", "black", "white")) +
+
+  scale_shape_manual(name = "Ecosystem",
+                     values = c(24, 21)) +
+
+  scale_size_manual(name = "Rat Control", values = c(2.5, 3, 2.5)) +
+  # manually define the fill colours
+
+  scale_fill_manual(
+    name = "Stoat Control",
+    values = c("cornflowerblue", "darkorange", "cornflowerblue")
+  ) +
+
+
+  geom_line(
+    data = rat.mean,
+    aes(y = mean.rat,
+        x = Date),
+    size = 0.95,
+    col = "grey50"
+  ) +
+
+  geom_point(
+    data = rat.mean,
+    aes(
+      y = mean.rat,
+      col = Rats,
+      shape = Valley,
+      fill = Control,
+      x = Date
+    ),
+    size = 7
+  ) +
+
+  # Remove fill legend and replace the fill legend using the newly created size
+  guides(
+    col = "none",
+    size = guide_legend(override.aes = list(
+      shape = c(15,0),alpha = 1
+    )),
+    shape = guide_legend(override.aes = list(
+      shape = c(24, 21), size = 4
+    )),
+    fill = guide_legend(override.aes = list(
+      col = c("cornflowerblue", "darkorange"),shape = c("square"),
+      size = 4
+    ))
+  ) +
+
+  xlab(expression(paste("Time", "(", italic(t), ")"))) +
+
+  ylab(expression(atop(paste("Minimum "," ", " number"," "),
+                       paste(" ", "of"," ",
+                             "rats"," ","(",italic(R[jt]),")"))) )
+```
+
+```{r new-rats-logd}
+rat.mean <- joined.rats %>%
+  group_by(Control, Valley, Date) %>%
+  summarise(mean.rat = mean(rat.mna, na.rm = TRUE),
+    sd.rat = sd(rat.mna, na.rm = TRUE),
+    se.rat = sd.rat / sqrt(length(rat.mna)) * 1.96,
+    lcl.rat = mean.rat - (sd.rat / sqrt(length(rat.mna)) *
+                                1.96),
+    ucl.rat = mean.rat + (sd.rat / sqrt(length(rat.mna)) *
+                                1.96)
+  ) %>%
+  ungroup() %>%
+  mutate(Valley = Valley,
+    gp.treat = factor(paste(Valley, Control)),
+    N = mean.rat,
+    Rats = factor("Full")
+  )
+
+p.design2 <- joined.rats %>%
+  group_by(Control, Valley, Date) %>%
+  summarise(N = mean(ifelse(rat.mna > 0, ifelse(rat.mna > 0, log(rat.mna), 0), 0)),
+            N = ifelse(N == "NA", 0, N),
+            Rats = factor("Full", levels = c("Full", "Reduced")),
+            sd.s = sd(ifelse(rat.mna > 0, log(rat.mna), 0), na.rm = TRUE),
+    se.s = sd(ifelse(rat.mna > 0, log(rat.mna), 0)) / sqrt(length(rat.mna)) * 1.96,
+    lcl.s = mean(ifelse(rat.mna > 0, log(rat.mna), 0)) - (sd(ifelse(rat.mna > 0, log(rat.mna), 0)) / sqrt(length(rat.mna)) *
+                                1.96),
+    lcl.slog = exp(lcl.s),
+    ucl.s = mean(ifelse(rat.mna > 0, log(rat.mna), 0)) + (sd(ifelse(rat.mna > 0, log(rat.mna), 0)) / sqrt(length(rat.mna)) *
+                                1.96),
+    ucl.slog = exp(ucl.s)) %>%
+  ungroup() %>%
+  mutate(rat.mna = exp(N),
+         grid = factor(paste(Control, Valley)))
+
+# plot rat CIs
+rat.plot <- ggplot(p.design2, aes(y = N,col = Rats,shape = Valley,fill = Control,x = Date)) +geom_rect(aes(xmin=ymd('2000-01-01'),xmax = ymd('2000-12-31'),ymin = -Inf,ymax = Inf), colour = "grey90", fill = "grey90") +
+  geom_rect(aes(xmin=ymd('2002-01-01'),xmax = ymd('2002-12-31'),ymin = -Inf,ymax = Inf), colour = "grey90", fill = "grey90") +
+  geom_rect(aes(xmin=ymd('2004-01-01'),xmax = ymd('2004-12-31'),ymin = -Inf,ymax = Inf), colour = "grey90", fill = "grey90") +
+  
+   geom_errorbar(aes(ymin = lcl.slog, ymax = ucl.slog, width = 0), lwd = 0.7, col = "black", position = location.move) +
+
+  geom_line(data = rat.mean,
+    aes(y = mean.rat,
+        x = Date),
+    size = 0.95,
+    col = "grey50", position = location.move) +
+
+  geom_point(
+    data = rat.mean,
+    aes(
+      y = mean.rat,
+      col = Rats,
+      shape = Valley,
+      fill = Control,
+      x = Date
+    ),size = 7 , position = location.move) +
+
+  scale_color_manual(name = "Stoat Control",
+                     values = c("white", "black", "white")) +
+
+  scale_shape_manual(name = "Ecosystem",
+                     values = c(24, 21)) +
+
+  scale_size_manual(name = "Rat Control", values = c(2.5, 3, 2.5)) +
+  # manually define the fill colours
+
+  scale_fill_manual(name = "Stoat Control",
+    values = c("cornflowerblue", "darkorange", "cornflowerblue")) +
+
+
+
+
+  # Remove fill legend and replace the fill legend using the newly created size
+  guides(
+    col = "none",
+    size = guide_legend(override.aes = list(
+      shape = c(15,0),alpha = 1
+    )),
+    shape = guide_legend(override.aes = list(
+      shape = c(24, 21), size = 4
+    )),
+    fill = guide_legend(override.aes = list(
+      col = c("cornflowerblue", "darkorange"),shape = c("square"),
+      size = 4
+    ))
+  ) +
+
+  xlab(expression(paste("Time ", "(", italic(t), ")"))) +
+
+  ylab(expression(atop(paste("Minimum "," ", " number"," "),
+                       paste(" ", "of"," ",
+                             "rats"," ","(",italic(R[jt]),")"))) )
+
+rat.plot
+```
+
+### Saving
+
+```{r message=FALSE, warning=FALSE}
+# export data
+write_csv(plot.dat.all1, "./data/plot-all-data1.csv")
+# write_csv(out.final, "./data/final-outputs.csv")
+write_csv(abund.dat5, "./data/abundance5.csv")
+
+# export plot for example vignette
+png("../figs/fig-3-3.png")
+rat.plot
+dev.off()
+```
+
+# References
+

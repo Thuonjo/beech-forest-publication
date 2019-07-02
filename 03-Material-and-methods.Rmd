@@ -1,0 +1,157 @@
+# Methods {#method}
+
+We carried out our study in beech forests in the South Island of New Zealand where stoats are the main predator and mice are the most abundant rodent species [@king1983]. Ship rats (*Rattus rattus*; [@innes2005]) and kiore (*Rattus exulans*; [@roberts1991]) are also present but at much lower numbers [@jones2011]. We tested whether reducing stoat populations by predator control influenced mouse population dynamics as shown in Figure 1, and whether the outcomes were affected by interactions between mice and rats. Specifically, we tested the following five predictions (@blackwell2001; @blackwell2003; @tompkins2006; and @tompkins2013; Figure 1: **Prediction A to D**). Relative to sites without stoat control, mouse populations at sites with stoat control should exhibit (direction of red arrow; Figure 1):
+
+A) Lower abundance in non-mast years;
+
+B) Higher peak abundance in mast years;
+
+C) A faster rate of increase in response to high seed availability in late summer during mast years;
+
+D) A slower rate decline from peak abundance during mast years;
+
+E) Predictions A-D should hold only when both stoat and rats are controlled.
+
+## Data collection
+
+```{r trip-data, echo=FALSE, message=FALSE, warning=FALSE}
+# number of nights of each in [j,t] matrix
+source("./R/r-packages-needed.R")
+source("./R/davidson_2019_theme.r")
+
+# number of nights of each in [j,t] matrix
+source("./R/wrangling/n-nights-code.R")
+
+#saving total number of nights during study
+n.nights.df.1 <- table(filter(n.nights.df,
+                              Var2 == "hol R2")$value)
+
+```
+
+Our study was carried out in two adjacent valleys: the Hollyford Valley (GPS *co-ord*, $44 \space 1 \space S$, $168 \space 1 \space E$) which has had intensive stoat control since 1983 to protect a vulnerable population of mohua [@odonnellPredictingIncidenceMohua1996] and the Eglinton Valley ( GPS *co-ord*: $44 \space 2 \space S, \space$ $168 \space 5 \space E$ ) which had no stoat control conducted prior to and during the first part of our study (*pers comms*). To test **Predictions A-E**, we set up four trapping grids, in each valley, with each grid located at least **xx** kms apart. On each grid, we monitored the abundance of rodent species (mice, rats and kiore) using Elliot traps (**permit numbers?**. Each grid comprised $81$ traps with each trap located $20$ metres apart in a $9 \times 9$  grid covering a total area of $2.56 \space ha \space (25600 \space m^2)$.
+
+We estimated the abundance of rodents on each grid using capture-mark-recapture (CR), assuming a closed population during each trip, which typically lasted 5 nights. Traps were set prior to each night and all rodents captured were marked with ear tags so that individuals could be uniquely identified. Mice had single unique ear-tag, rats were ear tagged, and each individual was ear notched with a notch position that identified the night of first capture so we could identify animals that had been captured but had lost ear tags. We sexed and weighed each captured animal. We aimed to trap for five nights on each trip but due to unfavourable weather fewer nights were trapped on some trips.
+
+We experimentally reduced rat (kiore and ship rats collectively) densities on two randomly selected grids in each valley by removing and humanely killing all captured rats on those grids **ref ethics?**). On the remaining two grids in each valley, we marked and released rats, as we did for mice on all grids.
+
+To measure food availability we recorded the amount of seed reaching the forest floorby placing four standard circular seed-traps at **random** locations on each grid. Each trap had a radius of $tray_i  = 0.125 m = 0.0491 m^2$ metres which over each trip equates to an overall sampled area on each grid of $Seed_{j,t} = Seed_{j,t} \times 0.1964 m^2$. These seed traps were in place for the duration of the study, with each trap elevated $1.2$ metres above the ground and covered by wire netting to preclude seed predators. The contents of each seed-trap were collected once during each trip ($Seed_{j,t}$) and the contents were sorted to remove unwanted plant matter (e.g. leaf litter). We counted beech seeds, recording only those with a kernal because rodents are known to only consume the kernel of beech seeds [*cite*].
+
+We undertook a total of *`r n.trip`* trips to the two valleys, with each trip spaced 3 months apart from May 1999 to February 2004. The timing of trips during the year corresponded to each of the four seasons (May = Autumn, August = Winter, November = Spring and February = Summer). 
+
+We aimed to test our predictions about the effects of stoat control by comparing mouse population dynamics in the two valleys. However, because we lacked replication at the valley-level, we could not be certain that differences in mouse population dynamics between valleys was due only to the presence or absence of stoat control. To overcome this, we undertook stoat control in the Hollyford Valley commencing in May 2002, allowing us to examine mouse dynamics in the presence or absence of stoat control in the same valley in addition to the between-valley comparison. Stoats were removed in the Hollyford Valley using 13 using Fenn Traps (are they following the road wendy? On map? data wendy?). The original treatments applied to the eight grids (two valleys; one with stoat control, one without, and; four grids in each valley, two with rat control and two without) were maintained from May 1999 to August 2002. From $November 2002$ **CHECK** onwards, we stopped collecting data from one rat control grid in each valley (Figure 2). 
+
+```{r figure-two-data-plot, include=FALSE}
+# #data file
+# source("./R/ecosystem-simulation/sim-raw-data.R", echo = FALSE)
+# 
+#file code
+source("./analysis/Davidson_2019_Data_wrangling.R", echo = FALSE)
+```
+
+
+```{r figure-two-study, echo=FALSE, fig.cap=cap.study, fig.height=3.5, fig.width=7, message=FALSE, warning=FALSE}
+#plot name
+fig.2.plot.design
+
+cap.study <- c("Schematic of the sampling design for this study showing the four grids in each valley labelled on the y axis. Each symbol represents a trip where mouse abundance, rat abundance and seed availability were measured on each grid, with circles for grids in the Hollyford valley and triangles for grids in the Eglinton valley. The colour and border of each symbol indicates whether each grid was subject to stoat and/or rat control. From May 2002 onward, stoat control commenced in the Hollyford valley and monitoring ceased on one grid without rat control in each valley.")
+```
+
+## Statistical modelling
+
+### Mouse abundance
+
+We used the capture-recapture (CR) data to estimate the number of mice ($N_{j,t}$) on each grid ($j$) during each trip ($t$), assuming the numbers of mice on each grid were independent of each other and that the populations on each grid were closed for the duration of each trip. We had data on the number of times each mouse $i$ was captured on each grid, during each trip ($y_{i,j,t}$). We used the method described in @royle2007 to estimate the number of mice from the CR data using data augumentation [@royle2009, @royle2012a]. 
+
+This involved augmenting data for the individual mice captured on each grid during each trip with pseudo-individuals that represented mice potentially present on the grid that were not captured. For the pseudo-individuals, the number of captures $y_{i,j,t}$ was set to zero. Each individual mouse, including the pseudo-individuals, was assigned an indicator variable $z_{i,j,t}$ taking the value 1 if the individual was present on the grid and 0 otherwise. For mice that were captured, $z_{i,j,t}$ is known and takes the value 1. For the pseudo-individuals, the value of $z_{i,j,t}$ is unknown and was estimated by modelling it as drawn from a Bernoulli distribution with overall probability of presence on a grid during a trip, $psi_{j,t}$: 
+
+$$z_{i,j,t} \sim bernoulli(psi_{j,t})$$
+
+The probability a individual mouse (including psuedo individuals) was captured $y_{i,j,t}$ times was drawn from a binomial distribution with probability, $\mu_{i,j,t}$, conditional on the number of nights trapping on each grid during each trip $J_{j,t}$.
+
+$$y_{i,j,t} \sim bin \left (\mu_{i,j,t},J_{j,t}  \right )$$
+
+$\mu_{i,j,t}$ is the probabilty an individual was captured during one night of trapping on a grid. This depends on whether the individual was present on the grid or not ($z_{i,j,t}$) and the probability of capture conditional on presence ($p_{i,j,t}$).
+
+$$\mu_{i,j,t} = z_{i,j,t} \times p_{i,j,t}$$
+
+We specified the number of pseudo-individuals ($m_{j,t}$) to be $4 \times$ the total number of mice captured on each grid during each trip ($n_{j,t}$), which should be sufficient to ensure a non-informative prior [@royle2012a; @ruscoe2011].
+
+We expected heterogeneity in the capture probabilities between grids and trips, and there is often heterogeneity among individuals in capture probability for small mammals [@krebs2011]. We modelled variation in individual capture probability on the logit scale, allowing for heterogeneity by assuming values were drawn from a normal distribution with a different mean for each trip and grid ($\mu.ind_{i,j,t}$). and a variance estimated from the data, which reflected unobserved among-individual heterogeneity. The mean capture probabilities for each trip and grid ($\mu.ind_{j,t}$) were modelled hierarchically, treating them as draws from a normal distribution with overall mean and variance estimated from the data.
+
+$$logit(p_{i,j,t}) = lp_{i,j,t}$$
+
+$$lp_{i,j,t} \sim Normal(\mu.ind_{j,t},\tau.ind)$$
+
+$$\mu.ind_{j,t} \sim Normal(\mu_p,\tau_p)$$
+
+We estimated the number of mice on each grid during each trip $N_{j,t}$ by assuming the $z_{j,t}$.
+
+$$N_{j,t} = \sum{z_{i,j,t}}$$
+
+We captured rats (ship rats and kiore combined) less often on grids than mice. Rather than a full capture-recapture analysis, we used the number of individual rats captured on each grid during each trip (the minimum number present) as an index of rat abundance. For each trip and grid we estimated seed availability as the number of seeds per $m^2$, averaged over all seed traps on a grid.
+
+We tested our predictions as follows. To test if *stoat control resulted in more mice in seasons when mouse abundance was low* (Prediction A), we compared mouse abundance ($N_{j,t}$) on grids with and without stoat control during low periods of seed availability using two-way analysis of variance.
+
+```R
+# You have a before-after design 
+# how did your analysis account for this. 
+# And what about rats?
+```
+
+To test if stoat control results in higher peak mouse abundance was high (**Prediction B**) we needed to account for the fact that peak abundance on gridsd would be partly driven by food avaliability [@king1983]. We therefore compared the number of mice per seed (${N_{j,t+1}}/{N_{j,t}}$) amoung grids with and without stoat control using the same ANOVA test as **Prediction A**.
+
+To test **Prediction C** and **D** we modelled the **rate of increase of mice** ($r_{j,t}$) during the relevent seasons (Figure 1) with rate of increase as:
+
+$$r_{j,t} = log\left (\frac {N_{j,t + 1}}{N_{j,t}} \right )$$
+
+To estimate ($r_{j,t}$) and propagate the uncertainty in our abundance estimates we used the complete data likelihood approach defined by @schofield2014 (for details see Appendix 1.1).
+
+To test predictions C and D we compared rates of increase with and without stoat control. To do this, we needed to account for other factors known to affect rates of increase in mouse populations, including seed availability, density dependence, and potential interactions with rats.
+
+### Functional response
+
+The relationship between seed availability and rate of increase will depend on the relationship between the number of seeds available to an individual mouse ($Seed_{j,t}$), how much is consumed and how this effects $r_{j,t}$ [@ruscoe2005]. 
+
+```R
+# This needs a clearer explanation to step the reader through what you did.
+```
+
+In our population model we estimate the relationship between the intake rate (functional response output) and the population growth of the population rate ($r_{j,t}$) as linearity related the the "intake rate" ($S_{j,t}$). We estimate the consumption rate we fitted three theoretical models. A simple Type I (linear; $g(F^1) = Seed_{j,t}$) functional response, a Type II functional response proposed by @holling1959 ($g(F^2) =  {log} \left ( Seed_{j,t} \right )$) and the fitted functional response estimated from data in NZ beech forests ([@choquenot2000]; $g(F^3) =  1042.1 \left (1- e^{-(Seed_{j,t} \times 0.00139)} \right )$. The third functional response was the best fitting functional response to data from the Eglinton Valley (Type II (IR); @ruscoe2005). To test these three models for this "intake rate", we fitted the different functional response models ($g(F^i)$) to our data (Appendix 2).
+
+Each function ($g(F^i)$) was fitted to the cumulative beech seed falls data ($Seed_{j,t}$) where at each data point represents the average seed fall* (**data section**) *at each grid ($j$) and trip ($t$) compared to the rate of population growth ($r_{j,t}$) over the subsequent period ($r_{j,t+1}$). Models were assessed using two measures of model fit (r-squared and AIC; Appendix 2)). We found that the best fitting functional response was $S_{j,t} = {log} \left ( Seed_{j,t} \right )$. For the population model we used the type II functional response to account for the "intake rate" $S_{j,t}$ of mice in relation to the rate of increase in mouse populations in relation to other community dynamics.
+
+### Community dynamics
+
+The model we fitted having identified the most appropriate functional response was:
+
+$$r_{j,t} = \beta_{0,s,v,c} + \beta_{1,s,v,c} (S_{j,t})+ \beta_{2,s,v,c} (N_{j,t-1}) + \beta_{3,s,v,c} (R_{j,t-1})$$
+
+```R
+# Explain what the beta terms represent in the model as part of describing each component
+```
+
+After accounting for the relationship between the *intake rate* ($S_{j,t}$) and the rate of increase in mouse populations we also know that mouse populations are regulated by other unidentified density dependent processes as well ($N_{j,t}$; @choquenot2000; @holland2015; @ruscoe2005). It is still not clear what these density dependent processes are but it is still regarded that they are an important component of mice dynamics in NZ forests[@holland2015]. In our model we include the abundance at time $t-1$ as a measure of density dependance ($N_{j,t-1}$).
+
+Rats may also influence mouse populations via competition, because rats and mice have overlapping diets [@king2005; @mcqueen2008], or possibly through direct predation [@bridgman2013]. We were interested in whether there was a difference between areas with and without rats in relation to the outcome of mice dynamics. To do this we using the minimum number of rats in the season before ($R_{j,t-1}$).
+
+```R
+# I see you do that here, but could be combined with the paragraph above.
+```
+
+To test **Prediction C** and **D** respectively (*does stoat control increase the rate at which mouse populations initially increasing/decreasing in response to beech seed intake*) we compared the population model intercept ($\beta_{i}$) between grids, with and without stoat control. Where $\beta_{0,s,v,c}$ (model intercept) is equivalent to $r_{j,t}$ when all other parameters are set to **zero** or **mean**; $\beta_{1,s,v,c}$ is the adjusted^[1] effect of a intake rate ( $S_{j,t}$) on $r_{j,t}$; $\beta_{2,s,v,c}$ is the adjusted effect of a single unit change in mouse density at the beginning of the previous season $N_{j,t-1}$ and $\beta_{3,s,v,c}$ is the adjusted effect of a single unit change of the minimum number of rats alive ($R_{j,t}$ ) at the beginning of the previous season $R_{j,t}$. If mesopredator release occurs in the increasing seasons; the intercept ($\beta_0$) for the areas with stoat control will be greater than the uncontrolled areas.
+
+We tested if mes predator release only occurs when *rat populations are reduced to low densities.* (**Prediction E**) by comparing differences between population model coefficient for rats ($\beta_3$) grouped into the grids where we reduced rat densities and the others that where not. If rat interactions are sufficiently high to impact mice populations but only when stoats are at low levels would result in differences between these parameter estimates with replicates showing differing population dynamics.
+
+[1] Refers to the model parameters being estimated after accounting for all other parameters in the population model (Model 1).
+
+## Overall priors
+
+```R
+# IS this the right place for priors?
+```
+
+Non-informative prior distributions were selected to allow the data to drive parameter estimation [@gelman2006]. The prior distributions of capture histories were assigned binomial distributions and variance terms were assigned broad uniform prior (0-100) as suggested by @gelman2006. The remaining parameters were assigned normally distributed prior with mean 0 and variance 0.00001. Each model was run for 100 000 iterations with a burn-in of 50 000 iterations, which was sufficient to achieve convergence as judged by visual inspection of the chain histories.
+
+## Software
+
+Models were fitted in a Bayesian framework using Markov Chain Monte Carlo (MCMC) methods and implemented in JAGS [@plummer2011], called from R v.4.3.4 using the jagsUI package [@kellner2018]. Each coefficient was modelled with uninformative priors for each season and valley. We specified non-informative priors to allow the data to drive parameter estimation [@gelman2006].  Each model was run for 100000 iterations with a burn-in of 50000 iterations, which was sufficient to achieve convergence as judged by visual inspection of the chain histories [@bronder]. For a full model description see Appendix 1.

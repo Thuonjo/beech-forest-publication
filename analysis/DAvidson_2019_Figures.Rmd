@@ -1,0 +1,239 @@
+---
+title: "Davidson_2019_Figures"
+author: "Anthony Davidson"
+date: "18/06/2019"
+output: rmarkdown::word_document
+---
+
+```{r setup}
+knitr::opts_chunk$set(
+	fig.align = "centre",
+	fig.path = "figs/",
+	message = FALSE,
+	warning = FALSE)
+
+source("./rcode/r-packages-needed.R")
+source("./rcode/davidson_2019_theme.r")
+```
+
+# Comments from Richard
+
+<--The legend on this figure also needs work. For example, the symbols for Yes and No are the same in the legend, so how do you tell which is which? And there are two legends named Stoat control, one which distinguishes valleys, but another legend termed Valley that also seems to distinguish valleys.-->
+
+<--So it’s not possible to tell what is going on.-->
+
+# Figure 1
+
+```{r figure-one-result-plot1, fig.cap=cap.pred, fig.width=8, fig.height=5}
+#data file
+source("./rcode/ecosystem-simulation/sim-raw-data.R", echo = FALSE)
+
+#file code
+source("./Rcode/ecosystem-simulation/sim-code-plot.R", echo = FALSE)
+
+#plot
+result.plot
+
+cap.pred <- c("**Figure 1:** *Each arrow and label represents a prediction we tested (Prediction B to D). Each prediction represents a collection of previous studies that have suggested how mouse populations may respond to seed availability in the presence or absence of stoats. A) during the years when no seed is available (non-mast years; Panel A); B) at the peak of mouse abundance (winter or spring); C) the season when mice populations are responding rapidly to increasing seed abundance (summer to winter in mast years; Panel B); D) when mouse abundance declines (spring to summer; Panel B).  The top panel represents the average seed availability cycle in New Zealand Native Beech Forests between non-mast (no shading) and mast years (shaded grey). The bottom panel represents the expected response of mouse abundance ($N_{j,t}$) to the variation in seed availability ($Seed_{j,t}) above where solid yellow symbols represent locations where stoats are un-controlled*")
+
+png("./figs/fig-1-1.png")
+result.plot
+dev.off()
+```
+
+```{r fig.cap=cap.pred, fig.align='center'}
+knitr::include_graphics(c("./figs/fig-1-1.png"))
+```
+
+# Figure 2
+
+```{r plot.explain.fig, fig.height=3, fig.width=6}
+# # # all other data from above scripts
+# source("./Rcode/manuscript-source-code.R", echo = FALSE)
+# 
+# source("./Rcode/figures/study-design-data.R", echo = FALSE)
+# 
+# # all other data from model outputs
+# source("./Rcode/figures/study-design-plot.R", echo = FALSE)
+# 
+# #plot code
+# # gather(plot.dat1, key = change, value = pt.plot)
+# fig.2.plot.design +
+#   theme(legend.position = "right")
+
+cap.study <- c("**Figure 2:** *Explains the sampling replicates over the duration of our study. Each point represents a trip where the length of our study is on the x-axis (time) and whether the area had stoat controlled conducted or not on the y-axis. Yellow points represent populations within the Eglinton Valley and black points are located in the Hollyford Valley. The dashed lines and large points represents the time during which each experimental manipulation was carried out. The background dots represent each individual replicate (independent populations). Points are jittered slightly (0.2) so replicates can be observed. Squares represent replicates *without?* rat removal and diamonds represent replications with rat removal undertaken.*")
+```
+
+```{r, echo=FALSE,fig.cap=cap.study,,fig.align='center'}
+knitr::include_graphics(c("./figs/fig-2-study.png"))
+```
+
+# Figure 3
+
+```{r figure_two_trends_seed, message=FALSE, warning=FALSE, include=FALSE}
+# #data and plotting import
+# #all in one
+# source("./Rcode/figures/seed-plot-may2019.R", echo = FALSE)
+# source("./Rcode/theme_raw_fig3s.r", echo = FALSE)
+# # plot
+# fig.3.seed+
+#   theme_trends()
+
+# filter(abund.dat5, year == 2000)
+#  & month == "Nov"
+#caption
+# fig.cap=cap.seed,
+cap.seed <- c("**Figure 3.1** *The average avaliable beech seed ($S_{j,t}$; point estimates) collected each season during the study period (Autumn 1999 to Winter 2004). The shape distinguishes the two valleys apart (triangle = Eglinton Valley, circle = Hollyford Valley) and solid symbols represent cases where stoats are uncontrolled and hollow in valleys with stoat removal.*")
+
+```
+
+```{r, echo=FALSE,out.width="100%", out.height="80%",fig.cap=cap.seed,,fig.align='center'}
+knitr::include_graphics(c("./figs/fig-3.1.png"))
+```
+
+```{r figure_trends_mice}
+# # Database.plot
+# # glimpse(meanM)
+# source("./Rcode/figures/mouse-plot-may2019.R", echo = FALSE)
+# #plot
+# fig.3.N +
+#   theme_trends()
+
+# caption
+# , fig.cap=cap.mice
+cap.mice <- "**Figure 3.2:** *The abundance of mice ($N_{j,t}$; point estimates) collected each trip during the study period (Autumn 1999 to Winter 2004). The shape distinguishes the two valleys apart (triangle = Eglinton Valley, circle = Hollyford Valley) and solid symbols represent cases where stoats are uncontrolled and hollow in valleys with stoat removal.*"
+```
+
+```{r, echo=FALSE,out.width="80%", out.height="80%",fig.cap=cap.mice,,fig.align='center'}
+knitr::include_graphics(c("./figs/fig-3.2.png"))
+```
+
+```{r figure_trends_rats}
+# # Database.plot
+# # glimpse(meanM)
+# source("./Rcode/figures/rat-plot-may2019.R")
+# 
+# # plot
+# fig.3.rat+
+#   theme_trends()
+
+#caption
+# , fig.cap=cap.rat
+cap.rat <- c("**Figure 3.3:** *The estimates of rate captures ($R_{j,t}$; point estimates) collected each trip during the study period (Autumn 1999 to Winter 2004). The shape of each point distinguishes the two valleys (triangle = Eglinton Valley, circle = Hollyford Valley) and solid symbols represent cases where stoats are uncontrolled and hollow in valleys with stoat removal.*")
+```
+
+```{r, echo=FALSE,out.width="100%", out.height="80%",fig.cap=cap.rat,,fig.align='center'}
+knitr::include_graphics(c("./figs/fig-3-3.png"))
+```
+
+# Figure 4
+
+```{r pa-plot, fig.cap=cap.Pa}
+# # data
+# source("./Rcode/figures/pa-plot-code.R", echo = FALSE)
+# 
+# # Plot
+# low.plot.time +
+#   theme(legend.position = "right")
+
+# Figure Caption
+cap.Pa <- c("**Figure 4:** *The unmodified abundance of mice in non-mast years (2001, 2003, 2004). The shape difference distinguishes the two valleys (triangle = Eglinton Valley, circle = Hollyford Valley), the yellow symbols represent cases where stoats are present and absent at points with black symbols and the solid symbols represent cases where rats are present and removed at points with hollow symbols.*")
+```
+
+```{r, out.width="100%", out.height="50%",fig.cap=cap.Pa,,fig.align='center'}
+knitr::include_graphics(c("./figs/fig-4-1.png"))
+```
+
+```{r pb-plot, fig.cap=cap.Pb}
+# #data
+# source("./Rcode/figures/pb-plot-code.R", echo = FALSE)
+# 
+# #plot
+# high.plot.time +
+#   theme(legend.position = "right")
+
+# Figure Caption
+cap.Pb <- c("**Figure 5:** *Difference between areas with and without stoat control at peak mouse abundance. The shape distinguishes the two valleys (triangle = Eglinton Valley, circle = Hollyford Valley). The yellow symbols represent cases where stoats are present and absent at points with black symbols and the solid symbols represent cases where rats are present and removed at points with hollow symbols.*")
+
+```
+
+```{r, out.width="100%", out.height="100%",fig.cap=cap.Pb,,fig.align='center'}
+knitr::include_graphics(c("./figs/fig-4-2.png"))
+```
+
+# Figure 5
+
+```{r increasing_seed_and_r_plot}
+# #rate vs seed data with lines for average prediction
+# source("./Rcode/figures/rate-seed-plot.R", echo = FALSE)
+# 
+# #plot all
+# # pc.seed.plot +
+# #   theme(legend.position = "right")
+# #just august
+# pc.plot.feb +
+#   theme(legend.position = "right")
+# # just most interesting variable
+
+# caption
+cap.Pc = c("**Figure 6:** *Visual representation of the effect of stoat control on the rate of increase in mice during the increasing seedfall (Autumn to Winter; **Prediction C**). The left column represents the untransformed estimates of seed $Seed_t$ (a), mouse density $N_{t-1}$ (b) and MNA of rats $R_{t}$ (c) in relation to rate of increase ($r_{j,t}$). The right-hand column is the corresponding parameter estimate from the population model. The shape difference distinguishes the two valleys (triangle = Eglinton Valley, circle = Hollyford Valley) and the solid symbols represent cases where stoats are present and absent at points with hollow symbols.*")
+```
+
+```{r, out.width="100%", out.height="100%",fig.cap=cap.Pc,,fig.align='center'}
+knitr::include_graphics(c("./figs/fig-5-1.png"))
+```
+
+```{r decreasing_seed_and_r_plot,fig.cap=cap.Pd}
+# #data for plot
+# source("./Rcode/figures/rate-density-plot.R", echo = FALSE)
+# 
+# #plot
+# pd.plot.feb +
+#   theme(legend.position = "right")
+
+#caption
+cap.Pd = c("**Figure 7:** *Results for the effect of stoat control during the decreasing seasons (Spring to Summer; prediction three). The left column represents the untransformed estimates of seed $S_{j,t}$ (a), mouse density $N_{t-1}$ (b) and MNA of rats $R_{t-1}$ (c) in relation to rate of increase ($r_{j,t}$). The right-hand column is the corresponding parameter estimate from the population model. The shape difference distinguishes the two valleys (triangle = Eglinton Valley (E), circle = Hollyford Valley) and the solid symbols represent cases where stoats are present and absent at points with hollow symbols. Parameter estimates (d,e,f) represent the differences in stoat control between valleys (left; hollow triangle) and within valley (right; hollow circle).*")
+
+```
+
+```{r, out.width="100%", out.height="100%",fig.cap=cap.Pd,,fig.align='center'}
+knitr::include_graphics(c("./figs/fig-6-1.png"))
+```
+
+# Figure 7
+
+```{r rat_resultsb3_plot_1}
+# #plot code
+# source("./Rcode/figures/rate-rat-plot.R", echo = FALSE)
+# 
+# #plot
+# pe.plot.feb +
+#   theme(legend.position = "right")
+
+#caption
+pE.cap <- c("**Figure 8:** *Differences in estimates between rats during each season of mice dynamics.*")
+```
+
+```{r, out.width="100%", out.height="100%",fig.cap=pE.cap,,fig.align='center'}
+knitr::include_graphics(c("./figs/fig-7-1.png"))
+```
+
+```{r rat_resultsb3_plot_3, fig.cap=pE.cap.1}
+# # parameter estimates
+# #data
+# # glimpse(out.final)
+# 
+# #plot code
+# source("./Rcode/figures/para-estimates-plot.R", echo = FALSE)
+# 
+# # plot
+# para.plot
+
+#caption
+pE.cap.1 <- c("**Figure 9:** *Differences in estimates between rats during each season of mice dynamics.*")
+
+```
+
+```{r, out.width="100%", out.height="100%",fig.cap=pE.cap.1,,fig.align='center'}
+knitr::include_graphics(c("./figs/fig-7-2.png"))
+```
