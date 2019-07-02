@@ -262,6 +262,8 @@ rat.plot.all +
 pE.cap <- c("Differences in estimates between rats during each season of mice dynamics.")
 ```
 
+![The unmodified abundance of mice in non-mast years. The shape difference distinguishes the two valleys, the yellow symbols represent cases where stoats are present and absent at points with black symbols and the solid symbols represent cases where rats are present and removed at points with hollow symbols.](../beech-forest-dynamics/figs/fig-7-2.png)
+
 The relationship between rats and mice was examined by comparing the estimated differences between treatments (Figure 8; lines represent mean relationships in the three treatment groups). We also statistically testing the difference between each different treatment and found no differences across all parameters (Figure 9).
 
 ```{r rat_resultsb3_plot_3, fig.cap=pE.cap.1}
@@ -280,7 +282,7 @@ pE.cap.1 <- c("Differences in estimates between rats during each season of mice 
 
 ```
 
-![The unmodified abundance of mice in non-mast years (../beech-paper-private/manuscript/figs/fig-7-2-1562049999684.png). The shape difference distinguishes the two valleys (triangle = Eglinton Valley, circle = Hollyford Valley), the yellow symbols represent cases where stoats are present and absent at points with black symbols and the solid symbols represent cases where rats are present and removed at points with hollow symbols.](./figs/fig-7-2.png)
+![The unmodified abundance of mice in non-mast years. The shape difference distinguishes the two valleys, the yellow symbols represent cases where stoats are present and absent at points with black symbols and the solid symbols represent cases where rats are present and removed at points with hollow symbols.](../beech-forest-dynamics/figs/fig-7-1.png)
 
 We did not have enough data to estimate a statistical interaction between rats and mice (non-linear relationship) or other more complex non-linear models for rat dynamics.
 
