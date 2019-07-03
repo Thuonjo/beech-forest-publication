@@ -255,8 +255,8 @@ We found that rat numbers $R_{j,t}$ had the smallest overall effect on mice dyna
 # source("./R/figures/rate-rat-plot.R", echo = FALSE)
 
 #plot
-rat.plot.all +
-  theme(legend.position = "right")
+# rat.plot.all +
+#   theme(legend.position = "right")
 
 #caption
 pE.cap <- c("Differences in estimates between rats during each season of mice dynamics.")
@@ -275,7 +275,7 @@ The relationship between rats and mice was examined by comparing the estimated d
 # source("./R/figures/para-estimates-plot.R", echo = FALSE)
 
 # plot
-para.plot.rat
+# para.plot.rat
 
 #caption
 pE.cap.1 <- c("Differences in estimates between rats during each season of mice dynamics.")

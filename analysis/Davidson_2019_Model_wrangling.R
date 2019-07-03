@@ -15,10 +15,10 @@
 # document global rules
 knitr::opts_chunk$set(comment=NA,
                       fig.path = "./figs/",
-                      echo=FALSE, 
-                      fig.height=6, 
+                      echo=FALSE,
+                      fig.height=6,
                       fig.width=10,
-                      message=FALSE, 
+                      message=FALSE,
                       warning=FALSE)
 
 # data
@@ -28,7 +28,7 @@ CR.model.out <- readRDS("C://Code/final_cauchy_2_5.rds")
 ## ----sorting-references, eval=FALSE, include=FALSE-----------------------
 ## library(citr)
 ## citr::md_cite("Beech-forest.bib")
-## 
+##
 ## # bib(file = "Beech-forests.bib")
 
 
@@ -66,10 +66,10 @@ plot.dat.all1 <- plot.dat.all1 %>%
 # already done!
 
 # rats have only 80 estimates not 144
-meanR <- read_csv("C://Code/data/mna_allrat.csv") 
+meanR <- read_csv("C://Code/data/mna_allrat.csv")
 # str(meanR)
 # glimpse(meanR)
-# str(plot.dat.all1) 
+# str(plot.dat.all1)
 # str(joined.rats)
 
 meanR <- meanR %>%
@@ -169,7 +169,7 @@ out.full.136 <- out.full.136 %>%
 # # Cleaning up total dataset
 # plot.dat.all1  <- plot.dat.all1 %>%
 #   mutate(trip = as.character(trip))# already done!
-# 
+#
 # # rats have only 80 estimates not 144
 # meanR <- read_csv("./data/mna_allrat.csv") %>%
 #   select (valley, grid ,trip.no ,n) %>%
@@ -178,7 +178,7 @@ out.full.136 <- out.full.136 %>%
 #             grid = grid,
 #             lag.rat.mna = n,
 #          Valley = valley)
-# 
+#
 # joined.rats <- left_join(plot.dat.all1, meanR, by = c("grid", "Valley", "trip"))
 
 
@@ -219,7 +219,7 @@ out.para1 <- out.para %>%
       TRUE ~ "other"
     )
   )
-  
+
 
 # final parameter dataset -----------------------------------------------------------
 # parameter outputs
@@ -247,7 +247,7 @@ out.dat1 <- out.full.136 %>%
          dat.mice.max,
          dat.seed.max,
          dat.rat.max)%>%
-  droplevels() 
+  droplevels()
 
 glimpse(out.dat1)
 # names(plot.dat.all1)
@@ -255,7 +255,7 @@ glimpse(out.dat1)
 out.para2 <- out.para1[1:48,]
 
 out.para3 <- out.para2 %>%
-      mutate(para = case_when(str_detect(var, "b0") ~ "b0", 
+      mutate(para = case_when(str_detect(var, "b0") ~ "b0",
       str_detect(var, "b.seed") ~ "b.seed",
       str_detect(var, "b.dens") ~ "b.dens",
       str_detect(var, "b.rat") ~ "b.rat"),
@@ -275,7 +275,7 @@ para.plot.dat <- out.final1 %>%
   mutate_if(is.factor, as.character) %>%
   # filter(month == "Feb") %>%
     droplevels() %>%
-  
+
                   mutate(Estimate = mean.b,
                          Control = control,
                          Valley = valley,)
@@ -285,7 +285,7 @@ para.plot.erors <- out.para3 %>%
   mutate_if(is.factor, as.character) %>%
   # filter(month == "Feb") %>%
     droplevels() %>%
-  
+
                   mutate(Estimate = mean.b,
                          Control = control,
                          Valley = valley,)
@@ -306,7 +306,7 @@ para.plot.dat$para <- factor(para.plot.dat$para, labels = c("Density", "Rats", "
 pC.plot.3 <- out.full.136 %>%
   filter(month == "Feb")
 
-# pc.plot.feb <- 
+# pc.plot.feb <-
 ggplot(pC.plot.3, aes(y = mean.r, x = log.seed)) +
   geom_errorbar(aes(ymin = lcl.r, ymax = ucl.r), lwd = 0.75, alpha = 0.2, position=position_dodge(width=30), width = 0) +
   geom_point(aes(colour = valley,shape = valley, fill = control),
@@ -466,8 +466,8 @@ seed.plot1 <- seed.plots %>%
 
 # # r2
 # # plot(pred~mean.r, data = seed.feb.plot1)
-# 
-# 
+#
+#
 # # data in tidyverse for ggplot2
 out.seed2 <- seed.plot1 %>%
   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -481,21 +481,21 @@ out.seed2 <- seed.plot1 %>%
 # dens.feb.plot1 <- feb.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.mice.min),
 #          pred.max = (b0 + b.dens * dat.mice.max))
-# 
+#
 # #tidyverse
 # out.dens.feb2 <- dens.feb.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
 #   mutate(lag.sjt = ifelse(pred.fact == "pred.min", dat.mice.min, dat.mice.max)) %>%
 #   select(valley, control, mean.r, lag.sjt) %>%
 #   mutate(treat = paste(valley, control))
-# 
-# 
+#
+#
 # # rat-feb -----------------------------------------------------------------
 # #spread and predict
 # rat.feb.plot1 <- feb.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.rat.min),
 #          pred.max = (b0 + b.dens * dat.rat.max))
-# 
+#
 # #tidyverse
 # out.rat.feb2 <- rat.feb.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -520,12 +520,12 @@ out.dat1 <- out.full.136 %>%
     droplevels()%>%
       mutate(Control = control, Valley = valley)
 
-# pc.plot.feb <- 
-  
+# pc.plot.feb <-
+
 ggplot(out.dat1, aes(y = mean.r, x = lag.sjt)) +
-    
+
   geom_errorbar(aes(ymin = lcl.r, ymax = ucl.r), lwd = 0.75, alpha = 0.2, position=position_dodge(width=30), width = 0) +
-    
+
   geom_point(aes(colour = valley,shape = valley, fill = Control),
              stroke = 1.5, size = 2, alpha = 0.7) +
 
@@ -660,8 +660,8 @@ seed.feb.plot1 <- feb.plot %>%
 
 # # r2
 # # plot(pred~mean.r, data = seed.feb.plot1)
-# 
-# 
+#
+#
 # # data in tidyverse for ggplot2
 out.seed.feb2 <- seed.feb.plot1 %>%
   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -669,27 +669,27 @@ out.seed.feb2 <- seed.feb.plot1 %>%
   select(Valley, Control, mean.r, lag.sjt) %>%
   mutate(treat = paste(Valley, Control),
          lag.sjt = ifelse(lag.sjt>0, lag.sjt, 0))
-# 
+#
 # # dens-feb ----------------------------------------------------------------
 # #spread
 # dens.feb.plot1 <- feb.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.mice.min),
 #          pred.max = (b0 + b.dens * dat.mice.max))
-# 
+#
 # #tidyverse
 # out.dens.feb2 <- dens.feb.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
 #   mutate(lag.sjt = ifelse(pred.fact == "pred.min", dat.mice.min, dat.mice.max)) %>%
 #   select(valley, control, mean.r, lag.sjt) %>%
 #   mutate(treat = paste(valley, control))
-# 
-# 
+#
+#
 # # rat-feb -----------------------------------------------------------------
 # #spread and predict
 # rat.feb.plot1 <- feb.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.rat.min),
 #          pred.max = (b0 + b.dens * dat.rat.max))
-# 
+#
 # #tidyverse
 # out.rat.feb2 <- rat.feb.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -701,7 +701,7 @@ out.seed.feb2 <- seed.feb.plot1 %>%
 
 ## ------------------------------------------------------------------------
 ### Seed lines (aug)
-  
+
 pC.plot.3 <- out.full.136 %>%
   filter(month == "Aug") %>%
   mutate(Control = control,
@@ -711,11 +711,11 @@ pC.plot.3 <- out.full.136 %>%
 
 ## ------------------------------------------------------------------------
 pc.plot <-   ggplot(pC.plot.3, aes(y = mean.r, x = log.seed)) +
-    
+
   geom_errorbar(aes(ymin = lcl.r, ymax = ucl.r), lwd = 0.75, alpha = 0.2, position=position_dodge(width=30), width = 0) +
-    
-  geom_point(aes(colour = Control, 
-                 shape = valley, 
+
+  geom_point(aes(colour = Control,
+                 shape = valley,
                  fill = Control),
              stroke = 1.001, size = 2, alpha = 0.7) +
 
@@ -747,7 +747,7 @@ pc.plot <-   ggplot(pC.plot.3, aes(y = mean.r, x = log.seed)) +
       size = 4
     ))
   ) +
-  
+
 xlab(expression(paste("Intake"," ", "Rate"," ","(",italic(S[jt]),")" ))) +
 # xlab(expression(atop(paste("Minimum"," ", "number"," "),paste("of", " ", "rats"," ","(",italic(R[jt]),")"))) )+
 # xlab(expression(atop(paste("Minimum"," ", "number"," "),paste("of", " ", "rats"," ","(",italic(R[jt]),")"))) )+
@@ -755,7 +755,7 @@ xlab(expression(paste("Intake"," ", "Rate"," ","(",italic(S[jt]),")" ))) +
 ylab(expression(atop(paste("Rate"," ", "of"," ",
                            "increase"),paste(" ", "of"," ",
                                              "mice"," ","(",italic(r[jt]),")"))) ) +
-  
+
 # scale_y_continuous(expand = c(0,0.01),breaks = seq(-4,4,1)) +
 theme_tufte() +
   theme_bw() +
@@ -850,8 +850,8 @@ dens.plot1 <- dens.plots %>%
 
 # # r2
 # # plot(pred~mean.r, data = seed.feb.plot1)
-# 
-# 
+#
+#
 # # data in tidyverse for ggplot2
 out.dens2 <- dens.plot1 %>%
   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -861,27 +861,27 @@ out.dens2 <- dens.plot1 %>%
          treat = paste(Valley,Control))
 
 
-# 
+#
 # # dens-feb ----------------------------------------------------------------
 # #spread
 # dens.feb.plot1 <- feb.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.mice.min),
 #          pred.max = (b0 + b.dens * dat.mice.max))
-# 
+#
 # #tidyverse
 # out.dens.feb2 <- dens.feb.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
 #   mutate(lag.sjt = ifelse(pred.fact == "pred.min", dat.mice.min, dat.mice.max)) %>%
 #   select(valley, control, mean.r, lag.sjt) %>%
 #   mutate(treat = paste(valley, control))
-# 
-# 
+#
+#
 # # rat-feb -----------------------------------------------------------------
 # #spread and predict
 # rat.feb.plot1 <- feb.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.rat.min),
 #          pred.max = (b0 + b.dens * dat.rat.max))
-# 
+#
 # #tidyverse
 # out.rat.feb2 <- rat.feb.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -893,7 +893,7 @@ out.dens2 <- dens.plot1 %>%
 
 ## ------------------------------------------------------------------------
 # data ----------------------
-  
+
 pC.plot.3 <- out.full.136 %>%
   mutate(Control = control,
          Valley = valley)
@@ -906,9 +906,9 @@ out.dat1 <- out.full.136 %>%
       mutate(Control = control, Valley = valley)
 
 ggplot(out.dat1, aes(y = mean.r, x = lag.N)) +
-    
+
   geom_errorbar(aes(ymin = lcl.r, ymax = ucl.r), lwd = 0.75, alpha = 0.2, position=position_dodge(width=30), width = 0) +
-    
+
   geom_point(aes(colour = valley,shape = valley, fill = Control),
              stroke = 1.5, size = 2, alpha = 0.7) +
 
@@ -1044,8 +1044,8 @@ feb.plot1 <- feb.plot %>%
 
 # # r2
 # # plot(pred~mean.r, data = seed.feb.plot1)
-# 
-# 
+#
+#
 # # data in tidyverse for ggplot2
 out.dens.feb2 <- feb.plot1 %>%
   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -1053,27 +1053,27 @@ out.dens.feb2 <- feb.plot1 %>%
   select(Valley, Control, mean.r, lag.N) %>%
   mutate(treat = paste(Valley, Control),
          lag.N = ifelse(lag.N>0, lag.N, 0.1))
-# 
+#
 # # dens-feb ----------------------------------------------------------------
 # #spread
 # dens.feb.plot1 <- feb.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.mice.min),
 #          pred.max = (b0 + b.dens * dat.mice.max))
-# 
+#
 # #tidyverse
 # out.dens.feb2 <- dens.feb.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
 #   mutate(lag.sjt = ifelse(pred.fact == "pred.min", dat.mice.min, dat.mice.max)) %>%
 #   select(valley, control, mean.r, lag.sjt) %>%
 #   mutate(treat = paste(valley, control))
-# 
-# 
+#
+#
 # # rat-feb -----------------------------------------------------------------
 # #spread and predict
 # rat.feb.plot1 <- feb.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.rat.min),
 #          pred.max = (b0 + b.dens * dat.rat.max))
-# 
+#
 # #tidyverse
 # out.rat.feb2 <- rat.feb.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -1086,7 +1086,7 @@ out.dens.feb2 <- feb.plot1 %>%
 ## ------------------------------------------------------------------------
 # data ----------------------
 ### Seed lines (feb)
-  
+
 pD.plot.3 <- out.full.136 %>%
   filter(month == "Feb") %>%
   mutate(Control = control,
@@ -1095,9 +1095,9 @@ pD.plot.3 <- out.full.136 %>%
          lag.N = lag(N))
 
 pd.plot.feb <- ggplot(pD.plot.3, aes(y = mean.r, x = lag.N)) +
-    
+
   geom_errorbar(aes(ymin = lcl.r, ymax = ucl.r), lwd = 0.75, alpha = 0.2, position=position_dodge(width=30), width = 0) +
-    
+
   geom_point(aes(colour = valley,shape = valley, fill = Control),
              stroke = 1.5, size = 2, alpha = 0.7) +
 
@@ -1129,7 +1129,7 @@ pd.plot.feb <- ggplot(pD.plot.3, aes(y = mean.r, x = lag.N)) +
       size = 4
     ))
   ) +
-  
+
   #
   # # scale_colour_manual(name = "Stoat control",
   # #                     labels = c("E-", "H+", "H-"),
@@ -1248,8 +1248,8 @@ May.plot1 <- May.plot %>%
 
 # # r2
 # # plot(pred~mean.r, data = seed.May.plot1)
-# 
-# 
+#
+#
 # # data in tidyverse for ggplot2
 out.dens.May2 <- May.plot1 %>%
   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -1257,27 +1257,27 @@ out.dens.May2 <- May.plot1 %>%
   select(Valley, Control, mean.r, lag.N) %>%
   mutate(treat = paste(Valley, Control),
          lag.N = ifelse(lag.N>0, lag.N, 0.1))
-# 
+#
 # # dens-May ----------------------------------------------------------------
 # #spread
 # dens.May.plot1 <- May.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.mice.min),
 #          pred.max = (b0 + b.dens * dat.mice.max))
-# 
+#
 # #tidyverse
 # out.dens.May2 <- dens.May.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
 #   mutate(lag.sjt = ifelse(pred.fact == "pred.min", dat.mice.min, dat.mice.max)) %>%
 #   select(valley, control, mean.r, lag.sjt) %>%
 #   mutate(treat = paste(valley, control))
-# 
-# 
+#
+#
 # # rat-May -----------------------------------------------------------------
 # #spread and predict
 # rat.May.plot1 <- May.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.rat.min),
 #          pred.max = (b0 + b.dens * dat.rat.max))
-# 
+#
 # #tidyverse
 # out.rat.May2 <- rat.May.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -1290,7 +1290,7 @@ out.dens.May2 <- May.plot1 %>%
 ## ------------------------------------------------------------------------
 # data ----------------------
 ### Seed lines (May)
-  
+
 pD.plot.3 <- out.full.136 %>%
   filter(month == "May") %>%
   mutate(Control = control,
@@ -1298,12 +1298,12 @@ pD.plot.3 <- out.full.136 %>%
          lag.sjt = lag(log.seed),
          lag.N = lag(N))
 
-# pc.plot.May <- 
-  
+# pc.plot.May <-
+
   ggplot(pD.plot.3, aes(y = mean.r, x = lag.N)) +
-    
+
   geom_errorbar(aes(ymin = lcl.r, ymax = ucl.r), lwd = 0.75, alpha = 0.2, position=position_dodge(width=30), width = 0) +
-    
+
   geom_point(aes(colour = valley,shape = valley, fill = Control),
              stroke = 1.5, size = 2, alpha = 0.7) +
 
@@ -1439,8 +1439,8 @@ Aug.plot1 <- Aug.plot %>%
 
 # # r2
 # # plot(pred~mean.r, data = seed.Aug.plot1)
-# 
-# 
+#
+#
 # # data in tidyverse for ggplot2
 out.dens.Aug2 <- Aug.plot1 %>%
   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -1448,27 +1448,27 @@ out.dens.Aug2 <- Aug.plot1 %>%
   select(Valley, Control, mean.r, lag.N) %>%
   mutate(treat = paste(Valley, Control),
          lag.N = ifelse(lag.N>0, lag.N, 0.1))
-# 
+#
 # # dens-Aug ----------------------------------------------------------------
 # #spread
 # dens.Aug.plot1 <- Aug.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.mice.min),
 #          pred.max = (b0 + b.dens * dat.mice.max))
-# 
+#
 # #tidyverse
 # out.dens.Aug2 <- dens.Aug.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
 #   mutate(lag.sjt = ifelse(pred.fact == "pred.min", dat.mice.min, dat.mice.max)) %>%
 #   select(valley, control, mean.r, lag.sjt) %>%
 #   mutate(treat = paste(valley, control))
-# 
-# 
+#
+#
 # # rat-Aug -----------------------------------------------------------------
 # #spread and predict
 # rat.Aug.plot1 <- Aug.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.rat.min),
 #          pred.max = (b0 + b.dens * dat.rat.max))
-# 
+#
 # #tidyverse
 # out.rat.Aug2 <- rat.Aug.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -1481,7 +1481,7 @@ out.dens.Aug2 <- Aug.plot1 %>%
 ## ------------------------------------------------------------------------
 # data ----------------------
 ### Seed lines (Aug)
-  
+
 pD.plot.3 <- out.full.136 %>%
   filter(month == "Aug") %>%
   mutate(Control = control,
@@ -1489,12 +1489,12 @@ pD.plot.3 <- out.full.136 %>%
          lag.sjt = lag(log.seed),
          lag.N = lag(N))
 
-# pc.plot.Aug <- 
-  
+# pc.plot.Aug <-
+
   ggplot(pD.plot.3, aes(y = mean.r, x = lag.N)) +
-    
+
   geom_errorbar(aes(ymin = lcl.r, ymax = ucl.r), lwd = 0.75, alpha = 0.2, position=position_dodge(width=30), width = 0) +
-    
+
   geom_point(aes(colour = valley,shape = valley, fill = Control),
              stroke = 1.5, size = 2, alpha = 0.7) +
 
@@ -1630,8 +1630,8 @@ Nov.plot1 <- Nov.plot %>%
 
 # # r2
 # # plot(pred~mean.r, data = seed.Nov.plot1)
-# 
-# 
+#
+#
 # # data in tidyverse for ggplot2
 out.dens.Nov2 <- Nov.plot1 %>%
   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -1639,27 +1639,27 @@ out.dens.Nov2 <- Nov.plot1 %>%
   select(Valley, Control, mean.r, lag.N) %>%
   mutate(treat = paste(Valley, Control),
          lag.N = ifelse(lag.N>0, lag.N, 0.1))
-# 
+#
 # # dens-Nov ----------------------------------------------------------------
 # #spread
 # dens.Nov.plot1 <- Nov.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.mice.min),
 #          pred.max = (b0 + b.dens * dat.mice.max))
-# 
+#
 # #tidyverse
 # out.dens.Nov2 <- dens.Nov.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
 #   mutate(lag.sjt = ifelse(pred.fact == "pred.min", dat.mice.min, dat.mice.max)) %>%
 #   select(valley, control, mean.r, lag.sjt) %>%
 #   mutate(treat = paste(valley, control))
-# 
-# 
+#
+#
 # # rat-Nov -----------------------------------------------------------------
 # #spread and predict
 # rat.Nov.plot1 <- Nov.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.rat.min),
 #          pred.max = (b0 + b.dens * dat.rat.max))
-# 
+#
 # #tidyverse
 # out.rat.Nov2 <- rat.Nov.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -1672,7 +1672,7 @@ out.dens.Nov2 <- Nov.plot1 %>%
 ## ------------------------------------------------------------------------
 # data ----------------------
 ### Seed lines (Nov)
-  
+
 pD.plot.3 <- out.full.136 %>%
   filter(month == "Nov") %>%
   mutate(Control = control,
@@ -1680,12 +1680,12 @@ pD.plot.3 <- out.full.136 %>%
          lag.sjt = lag(log.seed),
          lag.N = lag(N))
 
-# pc.plot.Nov <- 
-  
+# pc.plot.Nov <-
+
   ggplot(pD.plot.3, aes(y = mean.r, x = lag.N)) +
-    
+
   geom_errorbar(aes(ymin = lcl.r, ymax = ucl.r), lwd = 0.75, alpha = 0.2, position=position_dodge(width=30), width = 0) +
-    
+
   geom_point(aes(colour = valley,shape = valley, fill = Control),
              stroke = 1.5, size = 2, alpha = 0.7) +
 
@@ -1820,8 +1820,8 @@ dens.plot1 <- dens.plots %>%
 
 # # r2
 # # plot(pred~mean.r, data = seed.feb.plot1)
-# 
-# 
+#
+#
 # # data in tidyverse for ggplot2
 out.dens2 <- dens.plot1 %>%
   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -1831,27 +1831,27 @@ out.dens2 <- dens.plot1 %>%
          treat = paste(Valley,Control))
 
 
-# 
+#
 # # dens-feb ----------------------------------------------------------------
 # #spread
 # dens.feb.plot1 <- feb.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.mice.min),
 #          pred.max = (b0 + b.dens * dat.mice.max))
-# 
+#
 # #tidyverse
 # out.dens.feb2 <- dens.feb.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
 #   mutate(lag.sjt = ifelse(pred.fact == "pred.min", dat.mice.min, dat.mice.max)) %>%
 #   select(valley, control, mean.r, lag.sjt) %>%
 #   mutate(treat = paste(valley, control))
-# 
-# 
+#
+#
 # # rat-feb -----------------------------------------------------------------
 # #spread and predict
 # rat.feb.plot1 <- feb.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.rat.min),
 #          pred.max = (b0 + b.dens * dat.rat.max))
-# 
+#
 # #tidyverse
 # out.rat.feb2 <- rat.feb.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -1863,7 +1863,7 @@ out.dens2 <- dens.plot1 %>%
 
 ## ------------------------------------------------------------------------
 # data ----------------------
-  
+
 pC.plot.3 <- out.full.136 %>%
   mutate(Control = control,
          Valley = valley)
@@ -1877,9 +1877,9 @@ out.dat1 <- out.full.136 %>%
       mutate(Control = control, Valley = valley)
 
 ggplot(out.dat1, aes(y = mean.r, x = lag.R)) +
-    
+
   geom_errorbar(aes(ymin = lcl.r, ymax = ucl.r), lwd = 0.75, alpha = 0.2, position=position_dodge(width=30), width = 0) +
-    
+
   geom_point(aes(colour = valley,shape = valley, fill = Control),
              stroke = 1.5, size = 2, alpha = 0.7) +
 
@@ -2018,8 +2018,8 @@ dens.plot1 <- dens.plots %>%
 
 # # r2
 # # plot(pred~mean.r, data = seed.feb.plot1)
-# 
-# 
+#
+#
 # # data in tidyverse for ggplot2
 out.dens2 <- dens.plot1 %>%
   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -2029,27 +2029,27 @@ out.dens2 <- dens.plot1 %>%
          treat = paste(Valley,Control))
 
 
-# 
+#
 # # dens-feb ----------------------------------------------------------------
 # #spread
 # dens.feb.plot1 <- feb.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.mice.min),
 #          pred.max = (b0 + b.dens * dat.mice.max))
-# 
+#
 # #tidyverse
 # out.dens.feb2 <- dens.feb.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
 #   mutate(lag.sjt = ifelse(pred.fact == "pred.min", dat.mice.min, dat.mice.max)) %>%
 #   select(valley, control, mean.r, lag.sjt) %>%
 #   mutate(treat = paste(valley, control))
-# 
-# 
+#
+#
 # # rat-feb -----------------------------------------------------------------
 # #spread and predict
 # rat.feb.plot1 <- feb.plot %>%
 #   mutate(pred.min = b0 + (b.dens * dat.rat.min),
 #          pred.max = (b0 + b.dens * dat.rat.max))
-# 
+#
 # #tidyverse
 # out.rat.feb2 <- rat.feb.plot1 %>%
 #   gather(key = pred.fact, value = mean.r, pred.min:pred.max) %>%
@@ -2061,7 +2061,7 @@ out.dens2 <- dens.plot1 %>%
 
 ## ------------------------------------------------------------------------
 # data ----------------------
-  
+
 pC.plot.3 <- out.full.136 %>%
   filter(month == "Feb") %>%
   mutate(Control = control,
@@ -2077,9 +2077,9 @@ out.dat1 <- out.full.136 %>%
       mutate(Control = control, Valley = valley)
 
 ggplot(out.dat1, aes(y = mean.r, x = lag.R)) +
-    
+
   geom_errorbar(aes(ymin = lcl.r, ymax = ucl.r), lwd = 0.75, alpha = 0.2, position=position_dodge(width=30), width = 0) +
-    
+
   geom_point(aes(colour = valley,shape = valley, fill = Control),
              stroke = 1.5, size = 2, alpha = 0.7) +
 
@@ -2160,24 +2160,24 @@ paras.plot <- para.plot.erors %>%
 
 
 ggplot(data = paras.plot, aes(y = mean.b, x = control, colour = valley,
-                                                              shape = valley, 
-                                                              fill = control, 
+                                                              shape = valley,
+                                                              fill = control,
                                    group = paste(control, valley))) +
   geom_abline(intercept = 0,slope = 0, col = "red", size = 0.85) +
     geom_errorbar(aes(ymin = lcl.b, ymax = ucl.b, width = 0), lwd = 1.1, position = position_dodge(width = 0.25)) +
-       geom_point(stroke = 1.5, size = 2, alpha = 0.8, width = 0.25, position = position_dodge(width = 0.25)) + 
+       geom_point(stroke = 1.5, size = 2, alpha = 0.8, width = 0.25, position = position_dodge(width = 0.25)) +
   facet_grid(month~para, scales = "free")
 
 
-# para.plot.all <- 
+# para.plot.all <-
   ggplot(paras.plot, aes(y = mean.b, x = combo, col = Control, shape = valley, fill = Control)) +
   geom_errorbar(aes(ymin = lcl.b, ymax = ucl.b), lwd = 0.75, alpha = 1, width = 0.1, position =position_dodge(width = 1)) +
-  
+
   geom_abline(intercept = 0, slope = 0) +
   geom_point(size =4, alpha = 0.7, position = position_dodge(width = 1)) +
   facet_wrap(month~para, scales = "free") +
   # facet_wrap(combo~month, scales = "free") +
-  
+
    scale_color_manual(name = "Stoat Control",
                      values = c("white", "black", "white")) +
 
@@ -2208,13 +2208,13 @@ pc.plot
 
 # Save plot
 # export plot for example vignette
-png("./figs/fig-5-1.png")
-pc.plot
-dev.off()
+# png("./figs/fig-5-1.png")
+# pc.plot
+# dev.off()
 
 
 ## ---- out.width="100%", out.height="50%",,fig.align='center'-------------
-knitr::include_graphics(c("./figs/fig-5-1.png"))
+# knitr::include_graphics(c("./figs/fig-5-1.png"))
 
 
 ## ----include=FALSE-------------------------------------------------------
@@ -2222,13 +2222,13 @@ pd.plot.feb
 
 # Save plot
 # export plot for example vignette
-png("./figs/fig-6-1.png")
-pd.plot.feb
-dev.off()
+# png("./figs/fig-6-1.png")
+# pd.plot.feb
+# dev.off()
 
 
 ## ---- out.width="100%", out.height="50%",,fig.align='center'-------------
-knitr::include_graphics(c("./figs/fig-6-1.png"))
+# knitr::include_graphics(c("./figs/fig-6-1.png"))
 
 
 ## ------------------------------------------------------------------------
@@ -2241,12 +2241,12 @@ para.rats <- para.plot.erors %>%
 
 para.plot.rat <- ggplot(para.rats, aes(y = mean.b, x = month, col = Control, shape = valley, fill = Control)) +
   geom_errorbar(aes(ymin = lcl.b, ymax = ucl.b), lwd = 0.75, alpha = 1, width = 0.1, position =position_dodge(width = 1)) +
-  
+
   geom_abline(intercept = 0, slope = 0) +
   geom_point(size =4, alpha = 0.7, position = position_dodge(width = 1)) +
   # facet_wrap(month~para, scales = "free") +
   facet_wrap(~month, scales = "free") +
-  
+
    scale_color_manual(name = "Stoat Control",
                      values = c("white", "black", "white")) +
 
@@ -2269,7 +2269,7 @@ para.plot.rat <- ggplot(para.rats, aes(y = mean.b, x = month, col = Control, sha
       size = 4
     ))
   ) +
-  
+
 
 # xlab(expression(paste("Intake"," ", "Rate"," ","(",italic(S[jt]),")" ))) +
 xlab("Month") +
@@ -2317,9 +2317,9 @@ para.plot.rat
 
 ## ------------------------------------------------------------------------
 rat.plot.all <- ggplot(out.dat1, aes(y = mean.r, x = lag.R)) +
-    
+
   geom_errorbar(aes(ymin = lcl.r, ymax = ucl.r), lwd = 0.75, alpha = 0.2, position=position_dodge(width=30), width = 0) +
-    
+
   geom_point(aes(colour = Control,shape = valley, fill = Control),
              stroke = 1.5, size = 2, alpha = 0.7) +
     geom_line(data = out.dens2, aes(y = mean.r, x = lag.R, group = treat),size = 0.75, alpha = 0.7) +
@@ -2392,16 +2392,16 @@ rat.plot.all
 
 ## ------------------------------------------------------------------------
 # Save plot
-# export plot for example vignette
-png("./figs/fig-7-1.png")
-para.plot.rat
-dev.off()
-
-# Save plot
-# export plot for example vignette
-png("./figs/fig-7-2.png")
-rat.plot.all
-dev.off()
+# # export plot for example vignette
+# png("./figs/fig-7-1.png")
+# para.plot.rat
+# dev.off()
+#
+# # Save plot
+# # export plot for example vignette
+# png("./figs/fig-7-2.png")
+# rat.plot.all
+# dev.off()
 
 
 ## ----message=FALSE, warning=FALSE----------------------------------------
@@ -2431,47 +2431,47 @@ dev.off()
 
 ## ----eval=FALSE, include=FALSE-------------------------------------------
 ## # data-outputs ------------------------------------------------------------
-## 
+##
 ## #r-bind document
 ## # write.csv(out.final.2, "./Data/allprediction-output-data.csv")
-## 
+##
 ## # Rate of increase between Autumn and Winter
 ## # (May and August rate of change)
 ## # May mice abundace, seed and rat data
 ## # Overall Data
-## 
+##
 ## # data --------------------------------------------------------------------
 ## # reduced data
 ## # out.pC.1 <- filter(out.final.2, month == "Nov")
-## 
+##
 ## #main data from manuscript main file
 ## # but needs valley, control and Conditions
-## 
+##
 ##  ##dataset136 HAS CHANGED AND ISSUES WILL BE SOLVED WHEN THIS IS CORRECTED !!!!
 ## glimpse(out.full.136)
 ## # Think this is the last big hurdle
-## 
+##
 ## # UP TO HERE#
-## 
+##
 ## out.final.3 <- out.full.136 %>%
 ##   mutate(mean.r = as.numeric(N),
 ##     lag.sjt = as.numeric(lag.sjt),
 ##     lcl.r = as.numeric(lcl.r),
 ##     ucl.r = as.numeric(ucl.r))
-## 
-## 
+##
+##
 ## glimpse(out.final.3$month)
 ## # glimpse(out.final.3$controlT)
 ## # names(out.final.2)
 ## # levels(out.final.3$month)
 ## # out.final.3$month
 ## # levels(out.final.3$month)
-## 
+##
 ## # used to be
 ## # out.r <- read_csv("./Data/CR_output_pred.csv")
-## 
+##
 ## # lines summary -----------------------------------------------------------
-## 
+##
 ## pred.lines.seed <- out.final %>%
 ##   drop_na() %>%
 ##   # group_by(valley, control, Conditions, month) %>%
@@ -2483,26 +2483,26 @@ dev.off()
 ##     b.dens = mean(b.dens),
 ##     b.rat = mean(b.rat),
 ##     se.r = mean(se.r),
-## 
+##
 ##     M.seed = mean(lag.sjt),
 ##     M.dens = mean(lag.N),
 ##     M.rat = mean(lag.rat.mna),
-## 
+##
 ##     MAX.rat = max(lag.rat.mna),
 ##     MAX.seed = max(lag.sjt),
 ##     MAX.dens = max(lag.N),
 ##     MAX.r = max(mean.r),
-## 
+##
 ##     min.seed = min(lag.sjt),
 ##     min.dens = min(lag.N),
 ##     min.rat = min(lag.rat.mna),
 ##     min.r = min(mean.r),
-## 
+##
 ##     min.pt = b0 + (b.seed * min.seed),
 ##     max.pt = b0 + (b.seed * MAX.seed)
 ##   ) %>%
 ##   ungroup()
-## 
+##
 ## # %>%
 ## #   mutate(month = factor(as.character(month),
 ## #                         levels = c("Feb","May","Aug","Nov")))
@@ -2512,44 +2512,44 @@ dev.off()
 ## # str(out.final.3$month)
 ## # # lines data for seed -----------------------------------------------------
 ## # Seed lines (12x) --------------------------------------------------------
-## 
+##
 ## pred.lines.s2 <- pred.lines.seed %>%
 ##   select(month,controlT, min.r, MAX.r, min.seed, MAX.seed) %>%
 ##   droplevels() %>%
 ##   gather(value = mean.r, key = pt.lines, min.r:MAX.seed)
-## 
-## 
-## 
+##
+##
+##
 ## pred.lines.s2.1 <-  filter(pred.lines.s2, pt.lines == "MAX.seed" |
 ##            pt.lines == "min.seed") %>%
 ##   droplevels() %>%
 ##   mutate(log.cum.seed = mean.r) %>%
 ##   drop_na()
-## 
+##
 ## log.cum.seed <- pred.lines.s2.1$log.cum.seed
 ## # controlT <- pred.lines.s2.1$controlT
-## 
+##
 ## pred.lines.s3 <- cbind(pred.lines.s2[1:24, ], log.cum.seed)
-## 
+##
 ## pred.lines.s4 <- pred.lines.s3 %>%
 ##   mutate(pt.lines = factor(pt.lines)) %>%
 ##   drop_na()
-## 
+##
 ## pred.lines.s5 <- pred.lines.s4 %>%
 ##   mutate(lag.sjt = log.cum.seed,
 ##     valley = factor(rep(c("egl", "hol", "hol"), 2, each = 4)),
 ##     control = factor(rep(c("Yes", "Yes", "No"), 2, each = 4))) %>%
 ##   drop_na()
-## 
+##
 ## # glimpse(pred.lines.1)
 ## ####FUKED!!!!!!!!!!!!!###########
 ## # factor sort!
 ## month.refactor <- factor(as.numeric(pred.lines.s5$month))
 ## # ?recode_factor
-## 
+##
 ## pred.lines.s5$month <- recode(month.refactor, "1" = "May", "2" = "Nov", "3" = "Feb", "4" = "Aug")
-## 
-## 
+##
+##
 ## # lines data for density --------------------------------------------------
 ## pred.lines.dens <- out.final.3 %>%
 ##   drop_na() %>%
@@ -2561,48 +2561,48 @@ dev.off()
 ##     b.dens = mean(b.dens),
 ##     b.rat = mean(b.rat),
 ##     se.r = mean(se.r),
-## 
+##
 ##     M.seed = mean(lag.sjt),
 ##     M.dens = mean(lag.N),
 ##     M.rat = mean(lag.rat.mna),
-## 
+##
 ##     MAX.rat = max(lag.rat.mna),
 ##     MAX.seed = max(lag.sjt),
 ##     MAX.dens = max(lag.N),
 ##     MAX.r = max(mean.r),
-## 
+##
 ##     min.seed = min(lag.sjt),
 ##     min.dens = min(lag.N),
 ##     min.rat = min(lag.rat.mna),
 ##     min.r = min(mean.r),
-## 
+##
 ##     min.pt = b0 + (b.dens * min.dens),
 ##     max.pt = b0 + (b.dens * MAX.dens)
 ##   ) %>%
 ##   ungroup()
-## 
+##
 ## pred.lines.d2 <- pred.lines.dens %>%
 ##   select(month,controlT, min.r, MAX.r, min.dens, MAX.dens) %>%
 ##   droplevels() %>%
 ##   gather(value = mean.r, key = pt.lines, min.r:MAX.dens)
-## 
-## 
-## 
+##
+##
+##
 ## pred.lines.d2.1 <-  filter(pred.lines.d2, pt.lines == "MAX.dens" |
 ##                              pt.lines == "min.dens") %>%
 ##   droplevels() %>%
 ##   mutate(lag.N = mean.r) %>%
 ##   drop_na()
-## 
+##
 ## lag.N <- pred.lines.d2.1$lag.N
 ## # controlT <- pred.lines.s2.1$controlT
-## 
+##
 ## pred.lines.d3 <- cbind(pred.lines.d2[1:24, ], lag.N)
-## 
+##
 ## pred.lines.d4 <- pred.lines.d3 %>%
 ##   mutate(pt.lines = factor(pt.lines)) %>%
 ##   drop_na()
-## 
+##
 ## pred.lines.d5 <- pred.lines.d4 %>%
 ##   mutate(lag.N = lag.N,
 ##          valley = factor(rep(c("egl", "hol", "hol"), 2, each = 4)),
