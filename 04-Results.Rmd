@@ -226,6 +226,10 @@ pc.plot +
 cap.Pc = c("Visual representation of the effect of stoat control on the rate of increase in mice during the increasing seedfall (Autumn to Winter; **Prediction C**). The left column represents the untransformed estimates of seed $Seed_t$ (a), mouse density $N_{t-1}$ (b) and MNA of rats $R_{t}$ (c) in relation to rate of increase ($r_{j,t}$). The right-hand column is the corresponding parameter estimate from the population model. The shape difference distinguishes the two valleys (triangle = Eglinton Valley, circle = Hollyford Valley) and the solid symbols represent cases where stoats are present and absent at points with hollow symbols.")
 ```
 
+```{r, out.width="100%", out.height="50%",fig.cap = cap.Pc, fig.align='center'}
+knitr::include_graphics(c("./figs/fig-5-1.png"))
+```
+
 ### Prediction D
 
 *Stoat control did not hasten the decline from peak abundance.*
