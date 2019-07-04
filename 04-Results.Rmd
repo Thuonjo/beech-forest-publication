@@ -142,7 +142,7 @@ We did not find any significant difference between areas with and without stoat 
 # # source("./R/figures/pa-plot-code.R", echo = FALSE)
 # #
 # # # Plot
-low.plot.time
+# low.plot.time
 # +
 #   theme(legend.position = "right")
 
@@ -153,7 +153,11 @@ low.plot.time
 cap.Pa <- c("The unmodified abundance of mice in non-mast years (2001, 2003, 2004). The shape difference distinguishes the two valleys (triangle = Eglinton Valley, circle = Hollyford Valley), the yellow symbols represent cases where stoats are present and absent at points with black symbols and the solid symbols represent cases where rats are present and removed at points with hollow symbols.")
 ```
 
-![The unmodified abundance of mice in non-mast years (2001, 2003, 2004). The shape difference distinguishes the two valleys (triangle = Eglinton Valley, circle = Hollyford Valley), the yellow symbols represent cases where stoats are present and absent at points with black symbols and the solid symbols represent cases where rats are present and removed at points with hollow symbols.](./figs/pb-plot-1.png)
+<!-- ![The unmodified abundance of mice in non-mast years (2001, 2003, 2004). The shape difference distinguishes the two valleys (triangle = Eglinton Valley, circle = Hollyford Valley), the yellow symbols represent cases where stoats are present and absent at points with black symbols and the solid symbols represent cases where rats are present and removed at points with hollow symbols.](./figs/pb-plot-1.png) -->
+
+```{r pa-plot2, out.width="100%", out.height="50%",fig.cap = cap.Pa, fig.align='center'}
+knitr::include_graphics(c("./figs/pa-plot-1.png"))
+```
 
 For **Prediction A** we did not need to account for varying seed input because seed fall was biological equivalent to zero for all grids and trips during low abundance seasons [@choquenot2000].
 
@@ -191,7 +195,7 @@ During the years of peak abundance in our study we did observe lower mouse abund
 # #data
 # source("./R/figures/pb-plot-code.R", echo = FALSE)
 #plot
-high.plot.time 
+# high.plot.time 
 # +
   # theme(legend.position = "right")
 # Figure Caption
@@ -199,6 +203,10 @@ high.plot.time
 # gridExtra::grid.arrange(high.plot.time, out.dens.high, ncol = 2)
 
 cap.Pb <- c("Difference between areas with and without stoat control at peak mouse abundance. The shape distinguishes the two valleys (triangle = Eglinton Valley, circle = Hollyford Valley). The yellow symbols represent cases where stoats are present and absent at points with black symbols and the solid symbols represent cases where rats are present and removed at points with hollow symbols.")
+```
+
+```{r pb-plot2, out.width="100%", out.height="50%",fig.cap = cap.Pb, fig.align='center'}
+knitr::include_graphics(c("./figs/pb-plot-1.png"))
 ```
 
 ### Prediction C
@@ -219,8 +227,8 @@ We tested the differences in the rate of increase of mouse populations between t
 # pc.seed.plot +
 #   theme(legend.position = "right")
 #just august
-pc.plot +
-  theme(legend.position = "right")
+# pc.plot +
+#   theme(legend.position = "right")
 # just most interesting variable
 # caption
 cap.Pc = c("Visual representation of the effect of stoat control on the rate of increase in mice during the increasing seedfall (Autumn to Winter; **Prediction C**). The left column represents the untransformed estimates of seed $Seed_t$ (a), mouse density $N_{t-1}$ (b) and MNA of rats $R_{t}$ (c) in relation to rate of increase ($r_{j,t}$). The right-hand column is the corresponding parameter estimate from the population model. The shape difference distinguishes the two valleys (triangle = Eglinton Valley, circle = Hollyford Valley) and the solid symbols represent cases where stoats are present and absent at points with hollow symbols.")
@@ -241,11 +249,15 @@ This prediction specifically focused on the Spring and Summer seasons, when rode
 # source("./R/figures/rate-density-plot.R", echo = FALSE)
 
 #plot
-pd.plot.feb +
-  theme(legend.position = "right")
+# pd.plot.feb +
+#   theme(legend.position = "right")
 
 #caption
 cap.Pd = c("Results for the effect of stoat control during the decreasing seasons (Spring to Summer; prediction three). The left column represents the untransformed estimates of seed $S_{j,t}$ (a), mouse density $N_{t-1}$ (b) and MNA of rats $R_{t-1}$ (c) in relation to rate of increase ($r_{j,t}$). The right-hand column is the corresponding parameter estimate from the population model. The shape difference distinguishes the two valleys (triangle = Eglinton Valley (E), circle = Hollyford Valley) and the solid symbols represent cases where stoats are present and absent at points with hollow symbols. Parameter estimates (d,e,f) represent the differences in stoat control between valleys (left; hollow triangle) and within valley (right; hollow circle).")
+```
+
+```{r fig-pD, fig.cap = cap.Pc, fig.align='center'}
+knitr::include_graphics(c("./figs/fig-9-short.png"))
 ```
 
 ### Prediction E
@@ -266,7 +278,11 @@ We found that rat numbers $R_{j,t}$ had the smallest overall effect on mice dyna
 pE.cap <- c("Differences in estimates between rats during each season of mice dynamics.")
 ```
 
-![The unmodified abundance of mice in non-mast years. The shape difference distinguishes the two valleys, the yellow symbols represent cases where stoats are present and absent at points with black symbols and the solid symbols represent cases where rats are present and removed at points with hollow symbols.](../beech-forest-dynamics/figs/fig-7-2.png)
+```{r pE-plo, fig.cap = cap.Pc, fig.align='center'}
+knitr::include_graphics(c("./figs/rat-plot-1.png"))
+```
+
+<!-- ![The unmodified abundance of mice in non-mast years. The shape difference distinguishes the two valleys, the yellow symbols represent cases where stoats are present and absent at points with black symbols and the solid symbols represent cases where rats are present and removed at points with hollow symbols.](../beech-forest-dynamics/figs/rat-plot-1.png) -->
 
 The relationship between rats and mice was examined by comparing the estimated differences between treatments (Figure 8; lines represent mean relationships in the three treatment groups). We also statistically testing the difference between each different treatment and found no differences across all parameters (Figure 9).
 
