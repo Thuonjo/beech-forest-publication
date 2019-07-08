@@ -211,31 +211,33 @@ knitr::include_graphics(c("./figs/pb-plot-1.png"))
 
 ### Prediction C
 
-*Stoat control did not increase mouse populations as food becomes avaliable.*
-
-```{r include=FALSE}
+```{r adding-vignette-model, message=FALSE, warning=FALSE, include=FALSE}
+# knitr::purl("Davidson_2019_Simple_models.Rmd")
 source("./analysis/Davidson_2019_Model_wrangling.R")
 ```
 
+*Stoat control did not increase mouse populations as food becomes avaliable.*
+
 We tested the differences in the rate of increase of mouse populations between the four seasons, two valleys and stoat control areas (excluding the rat treatment) during seasons when mouse population were increasing (August; Autumn - Winter). We found was no significant differences between mice populations ($r_{j,t}$) during the increasing seasons of mouse dynamics. All 95% credible intervals for the differences between these trips included zero (Figure 10).
 
-```{r increasing_seed_and_r_plot}
+```{r increasing_seed_and_r_plot,cap.Pb, fig.cap = cap.Pc}
 #rate vs seed data with lines for average prediction
 # source("./R/figures/rate-seed-plot.R", echo = FALSE)
 
 #plot all
-# pc.seed.plot +
+# pd.plot.Aug + 
 #   theme(legend.position = "right")
 #just august
 # pc.plot +
 #   theme(legend.position = "right")
 # just most interesting variable
 # caption
+
 cap.Pc = c("Visual representation of the effect of stoat control on the rate of increase in mice during the increasing seedfall (Autumn to Winter; **Prediction C**). The left column represents the untransformed estimates of seed $Seed_t$ (a), mouse density $N_{t-1}$ (b) and MNA of rats $R_{t}$ (c) in relation to rate of increase ($r_{j,t}$). The right-hand column is the corresponding parameter estimate from the population model. The shape difference distinguishes the two valleys (triangle = Eglinton Valley, circle = Hollyford Valley) and the solid symbols represent cases where stoats are present and absent at points with hollow symbols.")
 ```
 
-```{r, out.width="100%", out.height="50%",fig.cap = cap.Pc, fig.align='center'}
-knitr::include_graphics(c("./figs/fig-5-1.png"))
+```{r, fig.cap = cap.Pc, fig.align='center'}
+knitr::include_graphics(c("./figs/pc-seed-plot-1.png"))
 ```
 
 ### Prediction D
@@ -256,8 +258,8 @@ This prediction specifically focused on the Spring and Summer seasons, when rode
 cap.Pd = c("Results for the effect of stoat control during the decreasing seasons (Spring to Summer; prediction three). The left column represents the untransformed estimates of seed $S_{j,t}$ (a), mouse density $N_{t-1}$ (b) and MNA of rats $R_{t-1}$ (c) in relation to rate of increase ($r_{j,t}$). The right-hand column is the corresponding parameter estimate from the population model. The shape difference distinguishes the two valleys (triangle = Eglinton Valley (E), circle = Hollyford Valley) and the solid symbols represent cases where stoats are present and absent at points with hollow symbols. Parameter estimates (d,e,f) represent the differences in stoat control between valleys (left; hollow triangle) and within valley (right; hollow circle).")
 ```
 
-```{r fig-pD, fig.cap = cap.Pc, fig.align='center'}
-knitr::include_graphics(c("./figs/fig-9-short.png"))
+```{r fig-pD, fig.cap = cap.Pd, fig.align='center'}
+knitr::include_graphics(c("./figs/pd-dens-plot-1.png"))
 ```
 
 ### Prediction E
@@ -266,19 +268,19 @@ knitr::include_graphics(c("./figs/fig-9-short.png"))
 
 We found that rat numbers $R_{j,t}$ had the smallest overall effect on mice dynamics ($\mu(\beta_3 | All \space Seasons)= 0.007$) and was the most variable parameter in our community model ($CV_{rats} = 5.74$). We recorded the highest number of rats in February and May, at the same times of high mouse abundance (Figure 3.3).
 
-```{r rat_resultsb3_plot_1}
+```{r rat_resultsb3_plot_1, fig.cap=pE.cap}
 #plot code
 # source("./R/figures/rate-rat-plot.R", echo = FALSE)
 
 #plot
-# rat.plot.all +
+# rat.plot.all
 #   theme(legend.position = "right")
 
 #caption
 pE.cap <- c("Differences in estimates between rats during each season of mice dynamics.")
 ```
 
-```{r pE-plo, fig.cap = cap.Pc, fig.align='center'}
+```{r pE-plo, fig.cap = pE.cap, fig.align='center'}
 knitr::include_graphics(c("./figs/rat-plot-1.png"))
 ```
 
