@@ -1,14 +1,6 @@
 # Results {#results}
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
-# At this point I’ll stop commenting because I’m starting to repeat myself.
-
-# There are lots of things that need work here but to start with the key things are:
-#1. You need to include a section on the statistical analyses. I’ve said this before and I’m not sure why you haven’t included it yet – it’s critical.
-#2. The figures all need revising. At present I can’t understand them, which means a reader unfamiliar with this work won’t be able to either. See comments above.
-
-#Having included the statistical methods and revised the figures you will be in a better position to edit the text for the Results. Like the figures, this needs a lot of work to clearly explain what you found.
-
 # source dataset-up
 source("./R/r-packages-needed.R", echo = FALSE)
 source("./R/davidson_2019_theme.r", echo = FALSE)
@@ -47,7 +39,7 @@ source("./R/wrangling/Data_CRinput_mice_jan2019.R", echo = FALSE)
 #, fig.height=3.5, fig.width=7, echo = FALSE
 ```
 
-We captured at total of *`r #sum(ind.cap)`* individual mice, *`r #sum(rat.rat$n)`* ship rats, and *`r #sum(rat.kiore$n)`* kiore during *`r #length(rat.kiore$trip.no)-1`* trips. The stoat control operation in the Eglinton Valley removed a total of $751$ individual stoats (**where did this come from?**) between May 1999 and June 2001 (**data missing for rest of study**). During this operation, low numbers of rats were also removed as by-catch in stoat traps but no other independent predator control was conducted (**pers comms?**).
+We captured at total of *`r sum(ind.cap)`* individual mice, *`r sum(rat.rat$n)`* ship rats, and *`r sum(rat.kiore$n)`* kiore during *`r length(rat.kiore$trip.no)-1`* trips. The stoat control operation in the Eglinton Valley removed a total of $751$ individual stoats (**where did this come from?**) between May 1999 and June 2001 (**data missing for rest of study**). During this operation, low numbers of rats were also removed as by-catch in stoat traps but no other independent predator control was conducted (**pers comms?**).
 
 Incidental stoat captures during our routine rodent trapping sessions were uncommon (proportion of total captures that were stoats = `r #28/sum(sum(ind.cap),sum(rat.kiore$n),sum(rat.rat$n))`), much lower in the Eglinton Valley ($N_{stoats} = 8$) where the long-term predator control program was undertaken than the Hollyford Valley ($N_{stoats} = 20$).
 
