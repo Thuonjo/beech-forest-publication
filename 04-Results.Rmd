@@ -66,51 +66,66 @@ abund.dat5 %>%
   filter(year == "2000" & cum.seed <5)
 ```
 
-Our study captured three years of high seedfall ($1999$, $2000$ and $2003$). During all other years ($2001$, $2002$ and $2004$) we observed low seed fall in all grid (Figure. As expected, we observed high variability both between and within each trip. For example, in $2000$, the difference in seedfall between grids varied from the highest largest estimate of available seed ($Seed_{7,2} = 3387 m^2$; Eglinton Valley) and two grids recording zero seedfall for th same period ($Seed_{4,2} and Seed_{4,5}$; Hollyford Valley) on the same trip.
+Our study captured three years of high seedfall ($1999$, $2000$ and $2003$). During all other years ($2001$, $2002$ and $2004$) we observed low seed fall in all grid (Figure 3. As expected, we observed high variability both between and within each trip. For example, in $2000$, the difference in seedfall between grids varied from the highest largest estimate of available seed ($Seed_{7,2} = 3387 m^2$; Eglinton Valley) and two grids recording zero seedfall for th same period ($Seed_{4,2} and Seed_{4,5}$; Hollyford Valley) on the same trip.
 
 ```{r figure-three-trends-seed, fig.cap=cap.seed}
 # #all in one
 # source("./R/figures/seed-plot-may2019.R", echo = FALSE)
 # source("./R/theme_raw_fig3s.r", echo = FALSE)
 # # plot
-plot.final.f3.1
+#plot.final.f3.1
 
-cap.seed <- c("The average avaliable beech seed ($S_{j,t}$; point estimates) collected each season during the study period (Autumn 1999 to Winter 2004). The shape distinguishes the two valleys apart (triangle = Eglinton Valley, circle = Hollyford Valley) and solid symbols represent cases where stoats are uncontrolled and hollow in valleys with stoat removal.")
+cap.seed <- c("The average avaliable beech seed ($Seed_{j,t}$; point estimates) collected each season during the study period (Autumn 1999 to Winter 2004). The shape distinguishes the two valleys apart (triangle = Eglinton Valley, circle = Hollyford Valley) and blue symbols represent cases where stoats are controlled and yellow in valleys with stoat were uncontrolled.")
 ```
 
-```{r pa-plot2-nit,fig.cap = cap.seed, fig.height=6, fig.width=10}
-knitr::include_graphics(c("./figs/fig-3.1.png"))
+```{r seed-nit,fig.cap = cap.seed, fig.height=6, fig.width=10}
+knitr::include_graphics(c("./figs/new-seed.png"))
 ```
 
 ## Mice
 
-We estimated mouse abundance ($N_{j,t}$), where $j$ represents each unique grid and $t$ for each trip from the overall community dynamics model. Mouse found that mouse abundance was greatest in the Eglinton Valley in grids and trips where seed availability was also high. In any given year mouse abundance was on average greater in the Eglinton Valley (Figure 3.2; triangles) than the Hollyford Valley.
+We estimated mouse abundance ($N_{j,t}$), where $j$ represents each unique grid and $t$ for each trip from the overall community dynamics model. We found that mouse abundance was greatest in the Eglinton Valley in grids and trips where seed availability was also high. In any given year mouse abundance was on average greater in the Eglinton Valley (Figure 3.2; triangles) than the Hollyford Valley.
 
 ```{r figure-three-trends-mice, fig.cap=cap.mice}
 # # Database.plot
 # # glimpse(meanM)
 # source("./R/figures/mouse-plot-may2019.R", echo = FALSE)
 # #plot
-fig.3.N
+# fig.3.N
 
 cap.mice <- "The abundance of mice ($N_{j,t}$; point estimates) collected each trip during the study period (Autumn 1999 to Winter 2004). The shape distinguishes the two valleys apart (triangle = Eglinton Valley, circle = Hollyford Valley) and solid symbols represent cases where stoats are uncontrolled and hollow in valleys with stoat removal."
 ```
 
+```{r mice-nit,fig.cap = cap.seed, fig.height=6, fig.width=10}
+knitr::include_graphics(c("./figs/new-mice.png"))
+```
+
 ## Rats
 
-Rats and mice displayed a similar response to beech seed (Figure 3.3 and 3.2 respectively). Overall rat numbers ($R_{j,t}$) remained relatively low in both valleys throughout the six-year study except for a single trip in Spring 1999. The highest rat abundance was recorded where no stoat control was undertaken (Hollyford Valley).
+Rats and mice displayed a similar response to beech seed (Figure 3 and 4 respectively). However, the overall number of rats captured ($R_{j,t}$) remained relatively low in both valleys throughout our six-year study, except for a single trip in Spring 2004 (*n = 25*). The highest rat abundance was recorded where stoat control was undertaken (Hollyford Valley).
 
 ```{r figure-three-trends-rats, echo=FALSE, fig.cap=cap.rat}
+#rats
+source("./R/wrangling/Data_input_allrats_jan2019.R", echo = FALSE)
+# need N_trip
+## ISSUE HERE
+names(min.rats)
+min.rats %>%
+  filter(n > 15)
 
-# # plot
-rat.plot
+# plot
+#rat.plot
 
 #caption
 # , fig.cap=cap.rat
 cap.rat <- c("The estimates of rate captures ($R_{j,t}$; point estimates) collected each trip during the study period (Autumn 1999 to Winter 2004). The shape of each point distinguishes the two valleys (triangle = Eglinton Valley, circle = Hollyford Valley) and solid symbols represent cases where stoats are uncontrolled and hollow in valleys with stoat removal.")
 ```
 
-All other trips with high rat records were in areas with stoat control. In the Hollyford Valley during both mast-years, rats increased irrespective of stoat control (Figure 3.3; solid vs. open symbols). No rats were captured after May 2002.
+```{r rats-nit,fig.cap = cap.seed, fig.height=6, fig.width=10}
+knitr::include_graphics(c("./figs/new-rats.png"))
+```
+
+All other trips with high rat records were in areas with stoat control. In the Hollyford Valley during both mast-years, rats increased irrespective of stoat control. No rats were captured after May 2002 in the Eglinton Valley.
 
 ## Community dynamics
 
@@ -125,18 +140,22 @@ All other trips with high rat records were in areas with stoat control. In the H
 #<-- E.g. t-test = 6.7, 22 df, p = 0.9 or whatever -->
 ```
 
-We found that the *intake rate* ($S_{j,t}$) always had the greatest impact on $r_{j,k}$. Greater than both mouse density ($N_{j,t}$) and rat presence ($Rat_{j,t}$). We accounted for the confounding effects of community processes such as density and food avaliability using our bayesian model and then tested for evidence of mesopredator release of mice during our study. We used the fitted model estimates to assess the differences between the key predictions proposed for areas with and without control after accounting for both the observation error (data collection and population estimates) and process error (population dynamics; @ahrestani2013).
+We found that the *intake rate* ($S_{j,t}$) always had the greatest impact on $r_{j,k}$. Greater than both mouse density ($N_{j,t}$) and rat presence ($Rat_{j,t}$). We accounted for the confounding effects of community processes such as density and food availability using our Bayesian model and then tested for evidence of mesopredator release of mice during our study. We used the fitted model estimates to assess the differences between the key predictions proposed for areas with and without control after accounting for both the observation error (data collection and population estimates) and process error (population dynamics; @ahrestani2013).
 
 ```{r adding-vignette, include=FALSE}
 # knitr::purl("Davidson_2019_Simple_models.Rmd")
 source("./analysis/Davidson_2019_Simple_models.R")
+
+s.final.model$coefficients[2,4]
+
+s.final.model$coefficients[3,4]
 ```
 
 ### Prediction A
 
 *Stoat control does not increase mouse populations at times of low abundance.*
 
-We compared the abundance of mice during trips when both mouse abundance and food availability were low and found no observable or significant differences in the estimates between areas with and without stoat control (f-stat = , CI = , p-value = *`r s.final.model$coefficients[2,4]`*) during any of the trips during our study. We did find that the variability in mouse abundance between the valley systems was different during these low mouse abundance phases (p-value = *`r s.final.model$coefficients[3,4]`*). 
+We compared the abundance of mice during trips when both mouse abundance and food availability were low and found no observable or significant differences in the estimates between areas with and without stoat control (f-stat = *?*, CI = *?*, p-value = *?*) during any of the trips during our study. We did find that the variability in mouse abundance between the valley systems was different during these low mouse abundance phases (f-stat = *?*, CI = *?*, p-value = *?*). 
 
 ```{r pa-summary-table, ft.split = TRUE, ft.align = "left"}
 # if rendering in word
@@ -146,9 +165,9 @@ We compared the abundance of mice during trips when both mouse abundance and foo
 # flextable::flextable(data.frame(co.effs, summary(low.mod3)$coefficients))
 ```
 
-We compared the abundance of mice during tripswhen both mouse abundance was low and food availability were low. We grouped the replicates between control areas (stoats present/absent), valleys( Eglinton and Hollyford Valleys) and rat conditions (rats reduced/not) and tested the differences between each group (Table 1).
+We compared the abundance of mice during trips when both mouse abundance was low and food availability were low. We grouped the replicates between control areas (stoats present/absent), valleys( Eglinton and Hollyford Valleys) and rat conditions (rats reduced/not) and tested the differences between each group (Table 1).
 
-We did not find any significant difference between areas with and without stoat control (p-value = 0.9299453). We found that the variation in mouse abundance was similar between our valley systems during these low mouse abundance times(p-value = 0.6835235). For Prediction A we did not need to account for varying seed input because seed fall was biological equivalent to zero for all grids and trips during low abundance seasons [@choquenot2000].
+We did not find any significant difference between areas with and without stoat control (f-stat = *?*, CI = *?*, p-value = *?*). We found that the variation in mouse abundance was similar between our valley systems during these low mouse abundance times (f-stat = *?*, CI = *?*, p-value = *?*). For **Prediction A** we did not need to account for varying seed input because seed fall was biological equivalent to zero for all grids and trips during low abundance seasons [@choquenot2000].
 
 ```{r pa-plot, fig.cap=cap.Pa}
 # # # data
@@ -194,14 +213,14 @@ pb.results.m2 <- data.frame(co.effs.m2, summary(high.mod2)$coefficients)
 pb.results.m3 <- data.frame(co.effs.m3, summary(high.mod3)$coefficients)
 ```
 
-We manually accounting for the effect of seed during the high phases of mouse and seed abundance by dividing the total estimate of mouse abundance and dividing this by the `intake rate` ($\left ( \frac{N_{j,t}}{S_{j,t}} \right )$) as a crude measure to account for the effects of food on mice populations. Our simple ANOVA model ([see here for analysis](www.ssnhub.com/beech-forest-publication/)) accounted for the differences in sample size between the areas with and without stoat control and un-equal variances within groups and found no significant difference between the stoat controlled and uncontrolled areas (**What is best here and I can repeat for all?**).
+Our simple ANOVA model ([see here for analysis](www.ssnhub.com/beech-forest-publication/)) accounted for the differences in sample size between the areas with and without stoat control and un-equal variances within groups and found no significant difference between the stoat controlled and uncontrolled areas (**What is best here and I can repeat for all?**).
 
 ```{r pb-summary-table, include=FALSE}
 # simple anova comparison
 #flextable::flextable(pb.results.m3)
 ```
 
-During the years of peak abundance in our study we did observe lower mouse abundance in the Hollyford Valley compared to the Eglinton Valley (**??**). Although this is not below the $0.05$ threshold. It should be noted that when the rat removal treatment was removed the p-value did drop below 0.05 (**??**).
+During the years of peak abundance in our study we did observe lower mouse abundance in the Hollyford Valley compared to the Eglinton Valley (f-stat = *?*, CI = *?*, p-value = *?*). Although this is not below the *0.05​* threshold. It should be noted that when the rat removal treatment was removed the p-value did drop below *0.05* (f-stat = *?*, CI = *?*, p-value = *?*).
 
 ```{r pb-plot, fig.cap=cap.Pb}
 # #data
@@ -228,7 +247,7 @@ knitr::include_graphics(c("./figs/pb-plot-1.png"))
 source("./analysis/Davidson_2019_Model_wrangling.R")
 ```
 
-*Stoat control did not increase mouse populations as food becomes avaliable.*
+*Stoat control did not increase mouse populations as food becomes available.*
 
 We tested the differences in the rate of increase of mouse populations between the four seasons, two valleys and stoat control areas (excluding the rat treatment) during seasons when mouse population were increasing (August; Autumn - Winter). We found was no significant differences between mice populations ($r_{j,t}$) during the increasing seasons of mouse dynamics. All 95% credible intervals for the differences between these trips included zero (Figure 10).
 
@@ -245,7 +264,7 @@ We tested the differences in the rate of increase of mouse populations between t
 # just most interesting variable
 # caption
 
-cap.Pc = c("Visual representation of the effect of stoat control on the rate of increase in mice during the increasing seedfall (Autumn to Winter; **Prediction C**). The left column represents the untransformed estimates of seed $Seed_t$ (a), mouse density $N_{t-1}$ (b) and MNA of rats $R_{t}$ (c) in relation to rate of increase ($r_{j,t}$). The right-hand column is the corresponding parameter estimate from the population model. The shape difference distinguishes the two valleys (triangle = Eglinton Valley, circle = Hollyford Valley) and the solid symbols represent cases where stoats are present and absent at points with hollow symbols.")
+cap.Pc = c("Visual representation of the effect of stoat control on the rate of increase of mouse populations during the increasing seedfall (Autumn to Winter; **Prediction C**). The different shapes distinguish the two valley systems (triangles = Eglinton Valley; circles = Hollyford Valley) and all solid symbols represent cases where rats are present and removed at points with hollow symbols.")
 ```
 
 ```{r, fig.cap = cap.Pc}
@@ -267,7 +286,7 @@ This prediction specifically focused on the Spring and Summer seasons, when rode
 #   theme(legend.position = "right")
 
 #caption
-cap.Pd = c("Results for the effect of stoat control during the decreasing seasons (Spring to Summer; prediction three). The left column represents the untransformed estimates of seed $S_{j,t}$ (a), mouse density $N_{t-1}$ (b) and MNA of rats $R_{t-1}$ (c) in relation to rate of increase ($r_{j,t}$). The right-hand column is the corresponding parameter estimate from the population model. The shape difference distinguishes the two valleys (triangle = Eglinton Valley (E), circle = Hollyford Valley) and the solid symbols represent cases where stoats are present and absent at points with hollow symbols. Parameter estimates (d,e,f) represent the differences in stoat control between valleys (left; hollow triangle) and within valley (right; hollow circle).")
+cap.Pd = c("Visual representation of the effect of stoat control during decreasing mouse abundance (Spring to Summer; *Prediction D*). The different shapes distinguish the two valley systems (triangles = Eglinton Valley; circles = Hollyford Valley) and all solid symbols represent cases where rats are present and removed at points with hollow symbols.")
 ```
 
 ```{r fig-pD, fig.cap = cap.Pd}
