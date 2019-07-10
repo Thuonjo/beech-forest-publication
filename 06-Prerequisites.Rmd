@@ -20,7 +20,7 @@ This is a _sample_ book written in **Markdown**. You can use anything that Pando
 The **bookdown** package can be installed from CRAN or Github:
 
 ```{r eval=FALSE}
-install.packages("bookdown")
+# install.packages("bookdown")
 # or the development version
 # devtools::install_github("rstudio/bookdown")
 ```

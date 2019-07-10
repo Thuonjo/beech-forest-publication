@@ -37,20 +37,36 @@ source("./R/wrangling/Data_CRinput_mice_jan2019.R", echo = FALSE)
 
 # image format
 #, fig.height=3.5, fig.width=7, echo = FALSE
+
+## total estimates
+
+sum(ind.cap)
+sum(rat.rat$n)
+sum(rat.kiore$n)
+
+# total stoat by-catch
+28/sum(sum(ind.cap),sum(rat.kiore$n),sum(rat.rat$n))
 ```
 
-We captured at total of *`r sum(ind.cap)`* individual mice, *`r sum(rat.rat$n)`* ship rats, and *`r sum(rat.kiore$n)`* kiore during *`r length(rat.kiore$trip.no)-1`* trips. The stoat control operation in the Eglinton Valley removed a total of $751$ individual stoats (**where did this come from?**) between May 1999 and June 2001 (**data missing for rest of study**). During this operation, low numbers of rats were also removed as by-catch in stoat traps but no other independent predator control was conducted (**pers comms?**).
+We captured at total of *2370* individual mice, *219* ship rats, and kiore during a total of *94* trips. The stoat control operation in the Eglinton Valley removed a total of *751* individual stoats (**where did this come from wendy?**) between *May 1999* and *June 2001* (**data missing for rest of study**). During this operation, low numbers of rats were also removed as by-catch in stoat traps but no other independent predator control was conducted in either study Valley (**pers comms?**).
 
-Incidental stoat captures during our routine rodent trapping sessions were uncommon (proportion of total captures that were stoats = `r #28/sum(sum(ind.cap),sum(rat.kiore$n),sum(rat.rat$n))`), much lower in the Eglinton Valley ($N_{stoats} = 8$) where the long-term predator control program was undertaken than the Hollyford Valley ($N_{stoats} = 20$).
+Incidental stoat captures during our routine rodent trapping sessions were uncommon (proportion of total captures that were stoats = *0.01*). Lower numbers of stoats were captured in the Eglinton Valley ($N_{stoats} = 8$) where the long-term predator control program was undertaken than the Hollyford Valley ($N_{stoats} = 20$).
 
 ## Seeds
 
 ```{r figure-two-data-seed, include=FALSE}
 # #data and plotting import
 source("./analysis/Davidson_2019_Data_wrangling.R", echo = FALSE)
+
+#highest seed
+abund.dat5 %>%
+  filter(year == "2000" & cum.seed > 3300)
+#lowest seed
+abund.dat5 %>%
+  filter(year == "2000" & cum.seed <5)
 ```
 
-Our study captured three years of high seedfall ($1999$, $2000$ and $2003$). During all other years ($2001$, $2002$ and $2004$) we observed low seedfall in all grid (Figure. As expected, we observed high variability both between and within each trip. For example, in $2000$, the difference in seedfall between grids varied from the highest largest estimate of available seed ($Seed_{j,t} = 3387 \space m ^2$; Eglinton Valley) and another grid recording only ($Seed_{j,t} = 87 \space m ^2$; Hollyford Valley) on the same trip.
+Our study captured three years of high seedfall ($1999$, $2000$ and $2003$). During all other years ($2001$, $2002$ and $2004$) we observed low seed fall in all grid (Figure. As expected, we observed high variability both between and within each trip. For example, in $2000$, the difference in seedfall between grids varied from the highest largest estimate of available seed ($Seed_{7,2} = 3387 m^2$; Eglinton Valley) and two grids recording zero seedfall for th same period ($Seed_{4,2} and Seed_{4,5}$; Hollyford Valley) on the same trip.
 
 ```{r figure-three-trends-seed, fig.cap=cap.seed}
 # #all in one
@@ -60,6 +76,10 @@ Our study captured three years of high seedfall ($1999$, $2000$ and $2003$). Dur
 plot.final.f3.1
 
 cap.seed <- c("The average avaliable beech seed ($S_{j,t}$; point estimates) collected each season during the study period (Autumn 1999 to Winter 2004). The shape distinguishes the two valleys apart (triangle = Eglinton Valley, circle = Hollyford Valley) and solid symbols represent cases where stoats are uncontrolled and hollow in valleys with stoat removal.")
+```
+
+```{r pa-plot2-nit,fig.cap = cap.seed, fig.height=6, fig.width=10}
+knitr::include_graphics(c("./figs/fig-3.1.png"))
 ```
 
 ## Mice
